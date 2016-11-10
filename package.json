@@ -1,0 +1,9 @@
+{ 
+	"name": "levlc",
+	"version": 1.0.0,
+	"description": 'Website Community Library',
+	"dependencies": {
+	
+	},
+	"author": "Mael Rabasse"
+}
