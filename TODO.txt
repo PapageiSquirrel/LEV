@@ -1,0 +1,70 @@
+﻿TODO
+------------------------------------------------------------------
+		Communication serveur-base de données
+[X] Ajout de nouvelles données
+[X] Mise à jour de données
+[X] Suppression de données
+
+[X] Recherche d'une donnée
+[-] Recherche de plusieurs données
+------------------------------------------------------------------
+		Fonctionnalités du serveur
+[X] Récupérer les requêtes du client
+[X] Connexion avec la base de données
+[X] Identification de la demande
+[X] Gestion des requêtes POST
+[X] Gestion des requêtes GET
+------------------------------------------------------------------
+		Communication client-serveur
+[X] Envoi de l'ouvrage en json au serveur
+[X] Sauvegarde des json sur le serveur
+[X] Renvoi par le serveur des données sauvegardées dans mongodb
+------------------------------------------------------------------
+		Inscription / Connexion d'un membre
+[X] Création du formulaire d'inscription
+[X] Création du formulaire de connexion
+[X] Récupérer les informations sur le server
+[X] Enregistrer dans la base de données les informations
+[X] Comparer la saisie à ce qui se trouve en bdd
+[X] Réponse du serveur au client avec les données
+[-] Indiquer lorsque l'utilisateur existe déjà
+[-] Verification des données saisies
+[-] Gestion de la session de l'utilisateur
+------------------------------------------------------------------
+		Ajout et modification d'un ouvrage
+[X] Création d'un ouvrage à partir de la saisie utilisateur
+[X] Envoi au serveur des données
+[X] Création en base de données de l'ouvrage et des auteurs
+[X] Comparer la saisie aux données déjà existantes
+	[X] Pour les auteurs
+	[X] Pour les ouvrages
+[X] Proposition de correction avec remplacement
+[-] Saisie complémentaire par genre
+	[X] Saisie différenciée
+	[-] Ajustement des données
+[-] Changement de template après validation
+[-] Possibilité de l'ajouter à la bibliothèque personnelle
+[-] Interface d'indication de lecture ou de possession
+[-] Formulaire d'ajout d'exemplaires
+[-] Mettre en forme le formulaire
+------------------------------------------------------------------
+		Recherche et sélection d'un ouvrage
+[X] Template de l'ouvrage 
+	[X] Construction du template
+	[-] Mise en forme
+[-] Template de l'ouvrage et des exemplaires
+	[-] Construction du template
+	[-] Mise en forme
+[-] Transition sur l'écran de modification d'ouvrages
+------------------------------------------------------------------
+		Services Angular
+[X] Gestion des auteurs
+[X] Gestion des ouvrages
+	[X] Fonction Add
+	[X] Fonction Update
+	[-] Fonction GetById
+	[-] Fonction GetListByParam
+	[X] Fonction GetAll
+[-] Gestion des exemplaires
+[-] Gestion des membres
+[X] Gestion des genres

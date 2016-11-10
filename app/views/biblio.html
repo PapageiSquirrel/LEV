@@ -1,0 +1,39 @@
+<div class="container-fluid row" ng-init="action = 'Consult';">
+	<nav class="container navbar navbar-nav col-md-1">
+		<a role="button" href="#/biblio">Ma Biblio</a>
+		<ul class="nav nav-pills nav-stacked">
+			<li role="presentation"><a href="#/biblio" ng-click="action = 'Ajout';">Ajouter</a>
+			<li role="presentation"><a href="#/biblio" ng-click="action = 'Consult';">Consulter</a></li>
+		</ul>
+		
+		<a role="button" href="#/biblio">Biblio Comp</a>
+	</nav>
+
+	<div class="container-fluid">
+		<div class="col-md-8">
+			<ajout-ouvrage ng-show="action == 'Ajout'" ouvrage="ouvrage" genres="genres" on-submit="submit()">
+				
+			</ajout-ouvrage>
+			
+			<selection-ouvrage ng-show="action == 'Selection'" ouvrage="ouvrage" genres="genres" on-submit="submit()">
+			
+			</selection-ouvrage>
+			
+			<consult-ouvrages ng-show="action == 'Consult' || action == 'Selection'" titre="'Mes Ouvrages'" ouvrages="ouvrages" on-selection="detailOuvrage">
+				
+			</consult-ouvrages>
+		</div>
+		
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading"><h3>Derniers Ajouts</h3></div>
+				
+				<div class="panel-body">
+					<ul class="list-unstyled">
+						<li ng-repeat="item in ouvrages" ng-if="$index <= 3"><affiche-ouvrage ouvrage="item"></affiche-ouvrage></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

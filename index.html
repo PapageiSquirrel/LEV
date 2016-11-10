@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Project Angle 1.0</title>
+		<!-- Latest compiled and minified CSS -->
+		<link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link type="text/css" rel="stylesheet" href="./css/styles.css" />
+	</head>
+	<body ng-app="common">
+		<div class="page-header container">
+			<h1>L<small>ivre</small> E<small>t</small> V<small>ous</small></h1>
+		</div>
+
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#/accueil">Accueil</a>
+					<a class="navbar-brand" href="#/biblio">Biblioth&egrave;que</a>
+					<a class="navbar-brand" href="#/membres">Membres</a>
+				</div>
+			</div>
+		</nav>
+		
+		<ng-view>
+
+		</ng-view>
+
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+		<script type="text/javascript" src="./libs/angular-route.min.js"></script>
+
+		<script type="text/javascript" src="./app/app.js"></script>
+		<script type="text/javascript" src="./app/services.js"></script>
+		<script type="text/javascript" src="./app/controllers.js"></script>
+		<script type="text/javascript" src="./app/directives.js"></script>
+		<script type="text/javascript" src="./app/filter.js"></script>
+	</body>
+</html>
