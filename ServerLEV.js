@@ -4,9 +4,7 @@ path = require("path"),
 url = require("url"),
 fs = require("fs");
 
-databaseUrl = "mongodb://localhost:27017/LEV";
-collections = ["UTILISATEURS", "OUVRAGES", "EXEMPLAIRES", 
-	"AUTEURS", "TYPES", "SOUS_TYPES", "GENRES", "SERIES"];
+databaseUrl = "mongodb://lev_user:lev_pass@ds147497.mlab.com:47497/db_lev";
 
 mongoClient = require("mongodb").MongoClient;
 assert = require('assert');
