@@ -41,7 +41,13 @@ common.factory('dataFactory', ['$http', function($http) {
 		$http({
 			url: '/data/find=' + col,
 			method: 'POST',
-			data: JSON.stringify(data),
+			data: JSON.stringify(data, function( key, value ) {
+				if( key === "$$hashKey" ) {
+					return undefined;
+				}
+
+				return value;
+			}),
 			headers: {'Content-Type': 'application/json'}
 		}).success(function (data, status, headers, config) {
 			//$scope.msg = 'Le serveur a chargé la collection ' + col + ' !\n';
