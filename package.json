@@ -1,9 +1,31 @@
-{ 
-	"name": "levlc",
-	"version": 1.0.0,
-	"description": 'Website Community Library',
-	"dependencies": {
-	
-	},
-	"author": "Mael Rabasse"
+{
+  "name": "levlc",
+  "version": "1.0.0",
+  "description": "Website Community Library",
+  "dependencies": {
+    "mongodb": "2.2.11",
+    "fs": "0.0.1-security",
+    "readline": "1.3.0"
+  },
+  "author": "Mael Rabasse",
+  "main": "ServerLEV.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "node ServerLEV.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PapageiSquirrel/LEV.git"
+  },
+  "keywords": [
+    "library"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PapageiSquirrel/LEV/issues"
+  },
+  "homepage": "https://github.com/PapageiSquirrel/LEV#readme",
+  "engines": {
+	"node": "4.6.1"
+  }
 }
