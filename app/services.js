@@ -41,7 +41,7 @@ common.factory('dataFactory', ['$http', function($http) {
 		$http({
 			url: '/data/find=' + col,
 			method: 'POST',
-			data: angular.toJson(data),
+			data: JSON.stringify(data),
 			headers: {'Content-Type': 'application/json'}
 		}).success(function (data, status, headers, config) {
 			//$scope.msg = 'Le serveur a chargé la collection ' + col + ' !\n';
