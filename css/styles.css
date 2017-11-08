@@ -1,9 +1,56 @@
+.separation {
+	border-top: 1px solid black;
+	padding-left: -15px !important;
+	padding-right: -15px !important;
+	margin: 0 !important;
+}
+
+.margin-top {
+	margin-top: 15px;
+}
+
+.padding-right {
+	padding-right: 15px;
+}
+.padding-left {
+	padding-left: 15px;
+}
+.padding-top {
+	padding-top: 15px;
+}
+.padding-bottom {
+	padding-bottom: 15px;
+}
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
 .banniereTitre {
 	background-color: @brand-warning;
 }
 
 .msg-error {
 	color: #FF0000;
+}
+
+.row.is-flex {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.row.is-flex > [class*='col-'] {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+}
+
+.align-items-center {
+	align-items: center;
+}
+
+button {
+    white-space: normal !important;
 }
 
 /* Début Style modalWindow */

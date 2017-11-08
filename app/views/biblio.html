@@ -1,21 +1,30 @@
-<div class="container-fluid row" ng-init="action = 'Consult';">
-	<nav class="container navbar navbar-nav col-md-1">
-		<a role="button" href="#/biblio">Ma Biblio</a>
-		<ul class="nav nav-pills nav-stacked">
-			<li role="presentation"><a href="#/biblio" ng-click="action = 'Ajout';">Ajouter</a>
-			<li role="presentation"><a href="#/biblio" ng-click="action = 'Consult';">Consulter</a></li>
-		</ul>
-		
-		<a role="button" href="#/biblio">Biblio Comp</a>
-	</nav>
+<div class="container-fluid" ng-init="action = 'Consult';">
+	<div class="row">
+		<div class="col-md-1">
+			<nav class="navbar navbar-nav">
+				<a role="button" href="#/biblio">Ma Biblio</a>
+				<ul class="nav nav-pills nav-stacked">
+					<li role="presentation"><a href="#/biblio" ng-click="initAjout('Ouvrages')">Ajouter un ouvrage</a>
+					<li role="presentation"><a href="#/biblio" ng-click="initAjout('Series')">Ajouter une série</a>
+					<li role="presentation"><a href="#/biblio" ng-click="action = 'Consult';">Consulter</a></li>
+				</ul>
+				
+				<a role="button" href="#/biblio">Biblio Comp</a>
+			</nav>
+		</div>
 
-	<div class="container-fluid">
-		<div class="col-md-8">
+		<div class="col-md-8 nopadding">
+			<!--
 			<ajout-ouvrage ng-show="action == 'Ajout'" ouvrage="ouvrage" genres="genres" on-submit="submit()">
 				
 			</ajout-ouvrage>
+			-->
 			
-			<selection-ouvrage ng-show="action == 'Selection'" ouvrage="ouvrage" genres="genres" on-submit="submit()">
+			<ajout ng-show="action == 'Ajout'" item="itemToAdd" col-item="colItem" genres="genres" on-submit="submit()">
+				
+			</ajout>
+			
+			<selection-ouvrage ng-show="action == 'Selection'" ouvrage="ouvrage" genres="genres" on-modifier="modifierOuvrage()">
 			
 			</selection-ouvrage>
 			
@@ -23,14 +32,14 @@
 				
 			</consult-ouvrages>
 		</div>
-		
+			
 		<div class="col-md-3">
 			<div class="panel panel-default">
 				<div class="panel-heading"><h3>Derniers Ajouts</h3></div>
 				
 				<div class="panel-body">
 					<ul class="list-unstyled">
-						<li ng-repeat="item in ouvrages" ng-if="$index <= 3"><affiche-ouvrage ouvrage="item"></affiche-ouvrage></li>
+						<li ng-repeat="item in ouvrages" ng-if="$index <= 3"><affiche-ouvrage ouvrage="item" on-click="detailOuvrage(item)"></affiche-ouvrage></li>
 					</ul>
 				</div>
 			</div>

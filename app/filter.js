@@ -4,12 +4,15 @@ common.filter('compareArrays', function() {
             if (arr2.length < 1) {
 				return true;
 			} else {
+				var in_arr1 = false;
+				
 				arr2.forEach(function(item2) {
 					if (item1._id === item2._id) {
-						return true;
+						in_arr1 = true;
 					}
 				});
-				return false;
+				
+				return !in_arr1;
 			}
         });
     };

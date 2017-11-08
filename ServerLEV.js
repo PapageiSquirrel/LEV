@@ -2,11 +2,28 @@
 http = require("http"),
 path = require("path"),
 url = require("url"),
-fs = require("fs");
+fs = require("fs"),
+formidable = require('formidable');
+io = require("socket.io");
+sessions = require("client-sessions");
+
+session = sessions({
+  cookieName: 'authentication',
+  secret: 'personalsecretsessionofmine', 
+  duration: 30 * 60 * 1000, 
+  activeDuration: 1000 * 60 * 5
+});
+
+const Console = require('console').Console;
+const output = fs.createWriteStream('./stdout.log');
+const errorOutput = fs.createWriteStream('./stderr.log');
+// custom simple logger
+const logger = new Console(output, errorOutput);
 
 databaseUrl = "mongodb://lev_user:lev_pass@ds147497.mlab.com:47497/db_lev";
 
 mongoClient = require("mongodb").MongoClient;
+ObjectID = require('mongodb').ObjectID;
 assert = require('assert');
 
 var insertDocument = function(db, col, doc, callback) 
@@ -77,7 +94,7 @@ var updateDocument = function(db, col, doc, callback)
 					if (update_counter === doc.Auteurs.length) {
 						db.collection(col).updateOne({ _id: doc._id }, doc, function(err, result) {
 							assert.equal(err, null);
-							console.log("Mise a jour dans " + col + ".");
+							console.log("Mise a jour dans AUTEURS.");
 							callback();
 						});
 					}
@@ -87,18 +104,27 @@ var updateDocument = function(db, col, doc, callback)
 					update_counter++;
 					
 					if (update_counter === doc.Auteurs.length) {
+						doc._id = ObjectID(doc._id);
 						db.collection(col).updateOne({ _id: doc._id }, doc, function(err, result) {
 							assert.equal(err, null);
-							console.log("Mise a jour dans " + col + ".");
+							console.log("Mise a jour d\'un auteur dans " + col + ".");
 							callback();
 						});
 					}
 				});
+
 			}
 			
+			doc._id = ObjectID(doc._id);
+			db.collection(col).updateOne({ _id: doc._id }, doc, function(err, result) {
+				assert.equal(err, null);
+				console.log("Mise a jour dans " + col + ".");
+				callback();
+			});
 		}
 	} else {
-		db.collection(col).replaceOne({ _id: doc._id }, doc, {upsert: true}, function(err, result) {
+		doc._id = ObjectID(doc._id);
+		db.collection(col).updateOne({ _id: doc._id }, doc, function(err, result) {
 			assert.equal(err, null);
 			console.log("Mise a jour dans " + col + ".");
 			callback();
@@ -115,9 +141,9 @@ var deleteDocument = function(db, col, doc, callback)
 	});
 }
 
-var findDocument = function(db, col, data, callback) 
+var findDocument = function(db, col, params, callback) 
 {
-	db.collection(col).findOne(data, function(err, result) {
+	db.collection(col).findOne(params, function(err, result) {
 		assert.equal(err, null);
 		console.log("Recherche dans " + col + ".");
 		callback(result);
@@ -170,6 +196,28 @@ var getFilename = function(request, response)
 	
 	// Information envoyée par le client
 	if (request.method == 'POST') {
+		if (urlpath.match('^\/file\/')) {
+			var form = new formidable.IncomingForm();
+			form.uploadDir = path.join(__dirname, '/images/' + urlpath.substring(6) + 's');
+			
+			form.on('file', function(field, file) {
+				fs.rename(file.path, path.join(form.uploadDir, file.name));
+				response.write(path.join('images/' + urlpath.substring(6) + 's', file.name));
+			});
+			
+			// log any errors that occur
+			form.on('error', function(err) {
+				console.log('An error has occured: \n' + err);
+			});
+
+			// once all the files have been uploaded, send a response to the client
+			form.on('end', function() {
+				response.end();
+			});
+			
+			form.parse(request);
+		}
+		
         console.log("POST");
         var body = null;
 		request.on('data', function (data) {
@@ -198,12 +246,34 @@ var getFilename = function(request, response)
 						});
 					});
 				} else if (urlpath.match('update')) {
-					mongoClient.connect(databaseUrl, function(err, db) {
-						assert.equal(null, err);
-						updateDocument(db, col, JSON.parse(body), function() {
-							db.close();
+					if (col == 'UTILISATEURS') {
+						session(request, response, function() {
+							mongoClient.connect(databaseUrl, function(err, db) {
+								assert.equal(null, err);
+								findDocument(db, col, { 'Pseudo': request.authentication.user }, function(res) {
+									if (res) {
+										var fieldsToUpdate = JSON.parse(body);
+										for(param in fieldsToUpdate) {
+											res[param] = fieldsToUpdate[param];
+										}
+										
+										updateDocument(db, col, res, function() {
+											db.close();
+										});
+										
+										request.authentication.biblio = res.Biblio;
+									}
+								});
+							});
 						});
-					});
+					} else {
+						mongoClient.connect(databaseUrl, function(err, db) {
+							assert.equal(null, err);
+							updateDocument(db, col, JSON.parse(body), function() {
+								db.close();
+							});
+						});	
+					}
 				} else if (urlpath.match('delete')) {
 					mongoClient.connect(databaseUrl, function(err, db) {
 						assert.equal(null, err);
@@ -217,6 +287,14 @@ var getFilename = function(request, response)
 						findDocument(db, col, JSON.parse(body), function(res) {
 							db.close();
 							
+							if (res && col == 'UTILISATEURS') {
+								session(request, response, function(){
+									console.log('User : ' + res.Pseudo + ' in session !');
+									request.authentication.user = res.Pseudo;
+									request.authentication.biblio = res.Biblio ? res.Biblio : [];
+								});
+							}
+							
 							response.writeHead(200, {"Content-Type": "application/json"});
 							if (res == null) {
 								console.log("No data found !");
@@ -228,6 +306,24 @@ var getFilename = function(request, response)
 					});
 				}
 				// TODO : Recherche de plusieurs éléments sur un critère
+			} else if (urlpath.match('^\/file\/')) {
+				// TODO : Upload du fichier (couverture) dans le dossier images
+				
+				// parse the incoming request containing the form data
+				/*
+				form.parse(request, function (err, fields, files) {
+					//Store the data from the fields in your data store.
+					//The data store could be a file or database or any other store based
+					//on your application.
+					response.writeHead(200, {
+						'content-type': 'text/plain'
+					});
+					response.write('received the data:\n\n');
+					
+					console.log(files);
+					
+				});
+				*/
 			} else {
 				console.log('Aucune operation effectuée.');
 			}
@@ -237,31 +333,81 @@ var getFilename = function(request, response)
 	if (request.method == 'GET') {
 		// Recherche sans paramètre (Nécessaire ?)  ==>  Problèmes de performances avec beaucoup de données ???
 		if (urlpath.match('^\/data\/')) {
-			var col = urlpath.substring(6).toUpperCase();
-			
-			mongoClient.connect(databaseUrl, function(err, db) {
-				assert.equal(null, err);
-				findAllDocuments(db, col, function(res) {
-					db.close();
-					
-					response.writeHead(200, {"Content-Type": "application/json"});
-					if (res == null) {
-						console.log("Problem encountered while connecting to the database !");
-					} else {
-						response.write(JSON.stringify(res));
-					}
-					response.end();
+			if (urlpath.match('\/Params:')) {
+				var col = urlpath.substring(urlpath.indexOf('=')+1, urlpath.search('\/Params:')).toUpperCase();
+				
+				var str_params = urlpath.substring(urlpath.indexOf(':')+1);
+				var arr_params = str_params.split('&');
+				var params = {}
+				for (var i = 1 ; i < arr_params.length; i++) {
+					params[arr_params[i].substring(0, arr_params[i].indexOf('='))] = arr_params[i].substring(arr_params[i].indexOf('=')+1);
+				}
+				
+				mongoClient.connect(databaseUrl, function(err, db) {
+					assert.equal(null, err);
+					findDocument(db, col, params, function(res) {
+						db.close();
+						
+						response.writeHead(200, {"Content-Type": "application/json"});
+						if (res == null) {
+							console.log("Problem encountered while connecting to the database ! " + urlpath);
+						} else {
+							response.write(JSON.stringify(res));
+						}
+						response.end();
+					});
 				});
+			} else {
+				var col = urlpath.substring(6).toUpperCase();
+			
+				mongoClient.connect(databaseUrl, function(err, db) {
+					assert.equal(null, err);
+					findAllDocuments(db, col, function(res) {
+						db.close();
+						
+						response.writeHead(200, {"Content-Type": "application/json"});
+						if (res == null) {
+							console.log("Problem encountered while connecting to the database !");
+						} else {
+							response.write(JSON.stringify(res));
+						}
+						response.end();
+					});
+				});
+			}
+		} else if (urlpath.match('^\/session')) {
+			session(request, response, function() {
+				response.writeHead(200, {"Content-Type": "application/json"});
+				response.write(request.authentication ? JSON.stringify(request.authentication) : 'null');
+				response.end();
+				console.log('SESSION : ' + request.authentication.user);
 			});
 		} else {
 			// Recherche de fichier sur le serveur à partir de l'url fournie
 			fs.exists(localpath, function(result) { 
 				getFile(result, response, localpath); 
 			});
+			
+			//response.write({ user: request.user ? JSON.stringify(request.user.username) : null });
 		}	
 	}
 }
  
 var server = http.createServer(getFilename);
 server.listen(process.env.PORT || 8080);
-console.log("Server available...");
+console.log("Server available on port 8080...");
+
+/*
+var listener = io.listen(server);
+
+listener.sockets.on('connection', function(socket){
+	socket.on('checkLogin', function(data, callback) {
+		session(request, response, function(){
+			console.log(request.authentication.user);
+			callback(request.authentication.user);
+			// TODO : vérifier que la connexion est bonne
+			//socket.emit('login', { user: request.authentication.user });
+		});
+	});
+});
+*/

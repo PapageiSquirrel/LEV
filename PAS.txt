@@ -1,0 +1,18 @@
+PROBLEMES A SOLUTIONNER
+------------------------
+TECHNIQUE
+[X] Echec du tri sur les auteurs existants, lorsqu'il y a déjà des auteurs 
+[-] Pas d'update sur les listes d'ouvrages et d'auteurs déjà chargées
+[-] 
+[-] 
+[-] 
+[-] 
+[-] 
+[-]
+
+MISE EN FORME
+[-] Derniers Ajouts 	=> 	pas de padding-bottom
+[-] Ajout d'éditions 	=> 	textes non centré horizontalement
+[-] Ajout d'auteurs 	=> 	auteurs pas mulitligne
+[-] 
+[-] 

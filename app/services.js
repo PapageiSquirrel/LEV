@@ -1,3 +1,70 @@
+common.service('auth', [ '$http', 'dataFactory', function($http, dataFactory) {
+    var user, biblio;
+	searchSession(function(data) {
+		user = data.user;
+		biblio = data.biblio;
+	});
+	
+	function searchSession(callback) { 
+		$http({
+			url: '/session=user/',
+			method: 'GET',
+		}).success(function (data, status, headers, config) {
+			callback(data);
+		}).error(function (data, status, headers, config) {
+			//$scope.msg = 'Le serveur n\'est pas parvenu à charger la collection ' + col + ' !\n';
+			//$scope.status = status + ' ' + headers;
+			callback(null); // TODO : retourner une exception à gérer
+		});
+	}
+	
+    return {
+		updateBiblio: function(obj, id=undefined) {
+			// TODO: contrôle de l'existence de l'objet
+			if (user) {
+				if (id) {
+					var obj_parent = biblio.find(function(o) { 
+						if (o._id ===  id)
+							return o;
+					});
+					
+					if (!obj_parent) {
+						obj_parent = { '_id': id, 'Lu': false, 'Possede': [] }
+						biblio.push(obj_parent);
+					}
+					
+					obj_parent.Possede.push(obj);
+					
+				} else {
+					var ae = biblio.find(function(o) { 
+						return o._id ===  obj._id;
+					});
+					
+					if (!ae) {
+						biblio.push(obj);
+					}
+				}
+				
+				dataFactory.update("Utilisateurs", {'Biblio': biblio}, function() {
+					
+				});
+			}
+		},
+		getBiblio: function() {
+			return biblio;
+		},
+        getUser: function() {
+			return user;
+        },
+        setUser: function(newUser) {
+            user = newUser;
+        },
+        isConnected: function() {
+			return !!user;
+        }
+    };
+}]);
+
 common.factory('listFactory', function() {
 	var genres = [{genre: 'Livre', sousGenres: ['Roman', 'Essai', 'Piece de theatre']},
 		{genre: 'Dessin', sousGenres: ['Bandes Dessinées', 'Manga', 'Comics']},
@@ -37,12 +104,15 @@ common.factory('dataFactory', ['$http', function($http) {
 		});
 	}
 
-	var requestDataWithParameter = function(col, data, callback) {
+	var requestDataWithParameter = function(col, params, callback) {
+		var urlpath = '/data/find=' + col + '/Params:';
+		for (key in params) {
+			urlpath += '&' + key + '=' + params[key];
+		}
+		
 		$http({
-			url: '/data/find=' + col,
-			method: 'POST',
-			data: JSON.stringify(data),
-			headers: {'Content-Type': 'application/json'}
+			url: urlpath,
+			method: 'GET',
 		}).success(function (data, status, headers, config) {
 			//$scope.msg = 'Le serveur a chargé la collection ' + col + ' !\n';
 			callback(data);
@@ -73,30 +143,58 @@ common.factory('dataFactory', ['$http', function($http) {
 		newItem: function(col) {
 			switch(col) {
 				case 'Ouvrages':
-					return { Titre: '', Auteurs: [], Genre: '' };
+					return { Titre: '', Auteurs: [], Genre: '', SousGenre: '', Editions: [], Couverture: 'images\\couvertures\\Default.png' };
+				case 'Series':
+					return { Titre: '', Auteurs: [], Genre: '', SousGenre: '', Editions: [] }
 				case 'Auteurs':
 					return { PrenomNom: '', Nom: '', Prenom: '', Alias: [] };
+				case 'Utilisateurs':
+					return { Pseudo: '', Email: '', MotDePasse: '', Biblio: [] };
 				default:
 					return null;
 			}
+		},
+		updateItem: function(col, itemToUpdate) {
+			var item;
+			switch(col) {
+				case 'Ouvrages':
+					item = { Titre: '', Auteurs: [], Genre: '', SousGenre: '', Editions: [], Couverture: 'images\\couvertures\\Default.png' };
+					break;
+				case 'Auteurs':
+					item = { PrenomNom: '', Nom: '', Prenom: '', Alias: [] };
+					break;
+				default:
+					item = null;
+					break;
+			}
+			
+			if (item) {
+				for(prop in item) {
+					if (!itemToUpdate[prop]) {
+						itemToUpdate[prop] = item[prop]
+					}
+				}
+			}
+			
+			return itemToUpdate;
 		},
 		add: function(col, item, callback) {
 			// TODO : try catch
 			submitData('add', col, item, function(item_added) {
 				if (item_added !== null) {
 					var obj_old = findObj(col);
-					if (obj_old === undefined) {
+					if (obj_old) {
 						storage.push({ collection: col, items: new Array(item) });
 					} else {
-						obj_old.push(item_added);
+						obj_old.items.push(item_added);
 					}
 					
 					if (col === "Ouvrages") {
 						var obj_bis_old = findObj("Auteurs");
-						if (obj_bis_old === undefined) {
+						if (obj_bis_old) {
 							storage.push({ collection: "Auteurs", items: new Array(item_added.Auteurs) });
 						} else {
-							obj_bis_old.push(item_added.Auteurs);
+							obj_bis_old.items.push(item_added.Auteurs);
 						}
 					}
 				} else {
@@ -115,6 +213,7 @@ common.factory('dataFactory', ['$http', function($http) {
 				});
 				
 				if (index_item_old !== -1) {
+					console.log(item);
 					items_old[index_item_old] = item;
 				}
 				
@@ -146,23 +245,12 @@ common.factory('dataFactory', ['$http', function($http) {
 			} else {
 				callback(obj_old.items);
 			}
+		},
+		getItemByParam: function (col, param, callback) {
+			requestDataWithParameter(col, param, function(res) {
+				callback(res);
+			});
 		}
-		/*
-		getListByParam: function (col, param, callback) {
-			var obj_old = findObj(col);
-			
-			if (obj_old === undefined) {
-				requestDataWithParameter(col, param, function(res) {
-					var new_obj = { collection: col, items: res };
-					storage.push(new_obj);
-					callback(res);
-				});
-			} else {
-				obj_old.items
-				callback(obj_old.items);
-			}
-		}
-		*/
 		/*
 		getById: function(col, id) {
 			return requestDataWithParameter(col, { _id: id });
@@ -191,76 +279,23 @@ common.factory('dataFactory', ['$http', function($http) {
 	}
 }]);
 
-/*
-common.factory('ouvrageFactory', ['$http', function($http) {
-	const COLLECTION = 'Ouvrages';
-	var ouvrages = [];
-	
-	return {
-		add: function(ouvrage) {
-			// TODO : try catch
-			var ouvrage_added = submitData('add', COLLECTION, ouvrage);
-			
-			if (ouvrage_added !== null) {
-				ouvrages.push(ouvrage_added);
-				
-				console.log('Problème rencontre lors de l\'ajout d\'un ouvrage !');
-			}
-			
-			return ouvrage_added;
-		},
-		update: function (ouvrage) {
-			// TODO : try catch
-			submitData('update', COLLECTION, ouvrage);
-			
-			var index_ouvrage_old = ouvrages.findIndex(function(o) {
-				return o._id === ouvrage._id;
-			});
-			
-			if (index_ouvrage_old !== -1) {
-				ouvrages.split(index_ouvrage_old, 1);
-				ouvrages.push(ouvrage);
-			}
-			
-			return null;
-		},
-		getById: function(id) {
-			return requestDataWithParameter(COLLECTION, { _id: id });
-		},
-		getListByParam: function (param) {
-			return requestDataWithParameter(COLLECTION, param);
-		},
-		getAll: function() {
-			data = requestData(COLLECTION);
-		}
-	}
-}]);
 
-common.factory('auteurFactory', ['$http', function($http) {
-	const COLLECTION = 'Auteurs';
-	var auteurs = [];
-	
-	return {
-		add: function(ouvrage) {
-			// TODO : try catch
-			var ouvrage_added = submitData('add', COLLECTION, ouvrage);
-			
-			if (ouvrage_added !== null) {
-				ouvrages.push(ouvrage_added);
-				
-				console.log('Problème rencontre lors de l\'ajout d\'un ouvrage !');
-			}
-			
-			return ouvrage_added;
-		},
-		getById: function(id) {
-			return requestDataWithParameter(COLLECTION, { _id: id });
-		},
-		getListByParam: function (param) {
-			return requestDataWithParameter(COLLECTION, param);
-		},
-		getAll: 
-			requestData(COLLECTION);
+// SERVICE D'UPLOAD DE COUVERTURE
+common.service('fileUploader', ['$http', function ($http) {
+	this.uploadFileToUrl = function(file, uploadUrl, callback){
+		var fd = new FormData();
+		fd.append('file', file);
+		
+		$http({
+			url: uploadUrl,
+			method: 'POST',
+			data: fd,
+			transformRequest: angular.identity,
+			headers: {'Content-Type': undefined}
+		}).success(function (data, status, headers, config) {
+			callback(data);
+		}).error(function(){
+		   
+		});
 	}
 }]);
-*/

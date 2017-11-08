@@ -39,23 +39,39 @@
 	[X] Pour les auteurs
 	[X] Pour les ouvrages
 [X] Proposition de correction avec remplacement
-[-] Saisie complémentaire par genre
+[X] Saisie complémentaire par genre
 	[X] Saisie différenciée
 	[-] Ajustement des données
-[-] Changement de template après validation
+[X] Changement de template après validation
 [-] Possibilité de l'ajouter à la bibliothèque personnelle
-[-] Interface d'indication de lecture ou de possession
-[-] Formulaire d'ajout d'exemplaires
-[-] Mettre en forme le formulaire
+	[-] Marquer l'ouvrage comme Lu
+[-] Formulaire d'ajout d'éditions
+	[X] Construction du template
+	[X] Indication de possession
+	[-] Mise en forme
+		
+[-] Ajout et modification de recueil (référencement)
+	[-] Création d'une checkbox plusieurs parties
+	[-] Transition sur un autre genre
+	[-] Adaptation  de la saisie
+	[-] Référencement des tomes ou création d'une référence
+[-] Ajout et modification de série
+	[-] Construction du template
+	[-] Création des références d'ouvrages 
+	[-] Création par édition
+	[-] Gestion de l'apparition de tomes lors d'une recherche
+	[-] Mise en forme
+
+
 ------------------------------------------------------------------
 		Recherche et sélection d'un ouvrage
 [X] Template de l'ouvrage 
 	[X] Construction du template
 	[-] Mise en forme
-[-] Template de l'ouvrage et des exemplaires
-	[-] Construction du template
+[X] Template de l'ouvrage, des éditions et des exemplaires
+	[X] Construction du template
 	[-] Mise en forme
-[-] Transition sur l'écran de modification d'ouvrages
+[X] Transition sur l'écran de modification d'ouvrages
 ------------------------------------------------------------------
 		Services Angular
 [X] Gestion des auteurs
@@ -65,6 +81,6 @@
 	[-] Fonction GetById
 	[-] Fonction GetListByParam
 	[X] Fonction GetAll
-[-] Gestion des exemplaires
+[-] Gestion des editions
 [-] Gestion des membres
 [X] Gestion des genres
