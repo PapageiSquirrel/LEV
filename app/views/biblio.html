@@ -14,21 +14,16 @@
 		</div>
 
 		<div class="col-md-8 nopadding">
-			<!--
-			<ajout-ouvrage ng-show="action == 'Ajout'" ouvrage="ouvrage" genres="genres" on-submit="submit()">
+			<ajout-o-s ng-show="action == 'Ajout'" item="itemToAdd" col-item="colItem" genres="genres" on-submit="submit(colItem)">
 				
-			</ajout-ouvrage>
-			-->
+			</ajout-o-s>
 			
-			<ajout ng-show="action == 'Ajout'" item="itemToAdd" col-item="colItem" genres="genres" on-submit="submit()">
-				
-			</ajout>
-			
-			<selection-ouvrage ng-show="action == 'Selection'" ouvrage="ouvrage" genres="genres" on-modifier="modifierOuvrage()">
+			<selection-ouvrage ng-show="action == 'Selection'" item="item" genres="genres" on-modifier="modifierOuvrage()" col-item="colItem">
 			
 			</selection-ouvrage>
 			
-			<consult-ouvrages ng-show="action == 'Consult' || action == 'Selection'" titre="'Mes Ouvrages'" ouvrages="ouvrages" on-selection="detailOuvrage">
+			<consult-ouvrages ng-show="action == 'Consult' || action == 'Selection'" 
+				titre="'Mes Ouvrages'" series="series" ouvrages="ouvrages" on-selection="detailOuvrage">
 				
 			</consult-ouvrages>
 		</div>

@@ -5,35 +5,53 @@
 			
 			<div class="panel-body row">
 				<form>
-					<!-- Vue du formulaire -->
-					<div class="form-group col-xs-4">
-						<label>Titre :</label>
-						<input type="text" name="text_titre" class="form-control" ng-model="item.Titre" ng-change="filtrerItemsExistants()" />
-					</div>
+					<!-- TODO : Ajouter un champ avec le nom de la série si elle existe et 
+								le numéro de volume ou la possiblité de pouvoir ajouter 	-->
 					
-					<div class="form-group col-xs-8 nopadding">
-						<ajout-auteur auteurs="item.Auteurs" item="item">
+					<div class="col-xs-12 nopadding">
+						<div class="form-group col-xs-4">
+							<label>Titre :</label>
+							<input type="text" name="text_titre" class="form-control" ng-model="item.Titre" ng-change="filtrerItemsExistants()" />
+						</div>
 						
-						</ajout-auteur>
-					</div>
-					
-					<div class="form-group col-xs-4" ng-if="colItem == 'Ouvrages'">
-						<label>Couverture :</label>
-						<!-- TODO: Créer le browser de fichier et l'upload -->
-						<img ng-show="item.Couverture !== 'images\\couvertures\\Default.png'" ng-src="{{item.Couverture}}" width="100px" height="150px" />
-						<div>
-							<input type="file" file-model="fileSelected">
-							<button ng-click="uploadCouverture()">Upload</button>
+						<div class="form-group col-xs-8">
+							<ajout-t-a children="item.Auteurs" child-col="'Auteurs'" item-col="colItem" item="item" data="'PrenomNom'" lib-data="'Prénom Nom'">
+							
+							</ajout-t-a>
 						</div>
 					</div>
 					
+					<div class="col-xs-12 nopadding">
+						<!-- Couverture pour les ouvrages -->
+						<div ng-controller="fileCtrl" class="form-group col-xs-4" ng-if="colItem == 'Ouvrages'">
+							<label>Couverture :</label>
+							<img ng-show="img !== 'images\\couvertures\\Default.png'" ng-src="{{item ? item.Couverture : img}}" width="100px" height="150px" />
+							<div>
+								<input type="file" file-model="fileSelected" />
+								<button ng-click="uploadCouverture()">Upload</button>
+							</div>
+						</div>
+						
+						<!-- Nombre de volumes avec la liste pour les séries -->
+						<div class="form-group col-xs-4 nopadding" ng-if="colItem == 'Series'">
+							<volume-serie mode="'Ajout'" titre-serie="item.Titre" nb-volumes="item.NbVolumes" list-volumes="item.Volumes">
+							
+							</volume-serie>
+						</div>
+						
+						<div class="form-group col-xs-8">
+							<ajout-t-a children="item.Tags" child-col="'Tags'" item-col="colItem" item="item" data="'Nom'" lib-data="'Mot-clé'">
+							
+							</ajout-t-a>
+						</div>
+					</div>
 					<div class="form-group col-xs-12">
 						<!-- Template de liste de Sous genre -->
 						<div class="row">
 							<div class="col-xs-3" ng-repeat="g in genres">
 								<button type="button" class="btn btn-primary btn-lg btn-block" ng-click="showSG(g.genre)">{{g.genre}}</button>
-								<select class="col-xs-12" ng-show="g.genre === g_selected">
-									<option ng-repeat="sg in g.sousGenres" ng-selected="item.SousGenre">{{sg}}</a>
+								<select class="col-xs-12" ng-show="g.genre === g_selected" ng-model="item.SousGenre" ng-options="sg for sg in g.sousGenres">
+									{{sg}}
 								</select>
 							</div>
 						</div>
@@ -95,7 +113,6 @@
 		</div>
 	</div>
 
-	<!--
 	<div class="col-xs-4 col-md-4">
 		<div class="panel panel-default" ng-show="itemsProposes.length > 0">
 			<div class="panel-heading"><label>Ouvrages deja existants</label></div>
@@ -104,7 +121,7 @@
 				<ul class="list-unstyled">
 					<li ng-repeat="op in itemsProposes" class="input-group col-md-12">
 						<span class="input-group-btn">
-							<!-- Template ouvrage --><!-- 
+							<!-- Template ouvrage -->
 							<affiche-ouvrage ouvrage="op" on-click="dejaExistant(op)"></affiche-ouvrage>
 						</span>
 					</li>
@@ -112,5 +129,4 @@
 			</div>
 		</div>
 	</div>
-	-->
 </div>

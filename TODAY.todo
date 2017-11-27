@@ -1,0 +1,35 @@
+20/11/2017
+-----------------------------------------
+[X] Ajout de tags par ouvrages -
+	[X] Construction du template -
+	[X] Logique prééxistante -
+-> Réutilisation du template d'ajout d'auteurs 
+	
+[X] Gestion des tags -
+----------------------------------------
+21/11/2017
+----------------------------------------
+[X] Ajustement du template ouvrage -
+-> Tag rajouté sans mise en forme ni lien
+
+[X] Ajout et modification de série -
+	[X] Construction du template -
+-> Réutilisation du template ajoutOuvrage et adaptation
+
+[X] Gestion des séries -
+-> Même fonction que pour les ouvrages avec qques modifications
+----------------------------------------
+22/11/2017
+----------------------------------------
+[X] Pas de SousGenre enregistré -
+-> utilisation de ng-options et ng-model
+
+[1] Fenêtre d'affichage et de sélection d'ouvrages par volume -
+-> 
+
+[1] Les tags déjà existants n'apparaissent pas  -
+-> ajout côté serveur de la logique / reste à voir pour update
+
+[1] Ajout et modification de série -
+	[1] Création d'édition globale -
+	[1] Gérer l'update des séries -

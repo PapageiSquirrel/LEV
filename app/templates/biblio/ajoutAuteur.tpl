@@ -5,7 +5,7 @@
 		<div class="input-group col-xs-12 nopadding">
 			<input type="text" class="form-control" placeholder="Prenom(s) Nom" ng-model="PrenomNom" ng-change="filtrerAuteursExistants()">
 			<span class="input-group-btn">
-				<button class="btn btn-secondary" type="button" ng-click="saveAuteur(PrenomNom)">+</button>
+				<button class="btn btn-secondary valid" type="button" ng-click="saveAuteur(PrenomNom)">+</button>
 			</span>
 		</div>
 	
@@ -13,7 +13,7 @@
 			<div ng-repeat="a in auteurs track by $index" class="input-group col-xs-4 row">
 				<span class="input-group-addon" id="basic-addon1">{{a.PrenomNom}}</span>
 				<span class="input-group-btn">
-					<button class=" btn btn-secondary" type="button" ng-click="removeAuteur($index)">-</button>
+					<button class=" btn btn-secondary suppr" type="button" ng-click="removeAuteur($index)">-</button>
 				</span>
 			</div>
 		</div>

@@ -37,11 +37,13 @@ common.service('auth', [ '$http', 'dataFactory', function($http, dataFactory) {
 					
 				} else {
 					var ae = biblio.find(function(o) { 
-						return o._id ===  obj._id;
+						return o._id === obj._id;
 					});
 					
 					if (!ae) {
 						biblio.push(obj);
+					} else {
+						ae.Lu = !ae.Lu;
 					}
 				}
 				
@@ -52,6 +54,17 @@ common.service('auth', [ '$http', 'dataFactory', function($http, dataFactory) {
 		},
 		getBiblio: function() {
 			return biblio;
+		},
+		isRead: function(id) {
+			if (biblio) {
+				var found = biblio.find(function(o) { 
+					return o._id === id;
+				});
+				
+				if (found) return found.Lu;
+				else return false;
+			}
+			else return undefined;
 		},
         getUser: function() {
 			return user;
@@ -76,9 +89,6 @@ common.factory('listFactory', function() {
 	return {
 		getAllGenres: function() {
 			return genres;
-		},
-		getAllCategories: function() {
-			return categories;
 		}
 	}
 });
@@ -127,7 +137,12 @@ common.factory('dataFactory', ['$http', function($http) {
 		$http({
 			url: '/data/' + op + '=' + col,
 			method: 'POST',
-			data: JSON.stringify(post_data),
+			data: JSON.stringify(post_data, function( key, value ) {
+				if( key === "$$hashKey" ) {
+					return undefined;
+				}
+				return value;
+			}),
 			headers: {'Content-Type': 'application/json'}
 		}).success(function (data, status, headers, config) {
 			//$scope.msg = 'Operation ' + op + ' sur la collection ' + col + ' effectuee sur le serveur !';
@@ -143,13 +158,16 @@ common.factory('dataFactory', ['$http', function($http) {
 		newItem: function(col) {
 			switch(col) {
 				case 'Ouvrages':
-					return { Titre: '', Auteurs: [], Genre: '', SousGenre: '', Editions: [], Couverture: 'images\\couvertures\\Default.png' };
+					return { Titre: '', Auteurs: [], Genre: '', SousGenre: '', Editions: [], 
+							Couverture: 'images\\couvertures\\Default.png', Tags: [], Numero: 0 };
 				case 'Series':
-					return { Titre: '', Auteurs: [], Genre: '', SousGenre: '', Editions: [] }
+					return { Titre: '', Auteurs: [], NbVolumes: 0, Volumes: [], Genre: '', SousGenre: '', Editions: [], Tags: [] }
 				case 'Auteurs':
 					return { PrenomNom: '', Nom: '', Prenom: '', Alias: [] };
 				case 'Utilisateurs':
 					return { Pseudo: '', Email: '', MotDePasse: '', Biblio: [] };
+				case 'Tags':
+					return { Nom: '' };
 				default:
 					return null;
 			}
@@ -158,11 +176,15 @@ common.factory('dataFactory', ['$http', function($http) {
 			var item;
 			switch(col) {
 				case 'Ouvrages':
-					item = { Titre: '', Auteurs: [], Genre: '', SousGenre: '', Editions: [], Couverture: 'images\\couvertures\\Default.png' };
+					item = { Titre: '', Auteurs: [], Genre: '', SousGenre: '', Editions: [], Couverture: 'images\\couvertures\\Default.png', Tags: [], InSerie: false };
 					break;
+				case 'Series':
+					item = { Titre: '', Auteurs: [], NbVolumes: 0, Volumes: [], Genre: '', SousGenre: '', Editions: [], Tags: [] };
 				case 'Auteurs':
 					item = { PrenomNom: '', Nom: '', Prenom: '', Alias: [] };
 					break;
+				case 'Tags':
+					item = { Nom: '' };
 				default:
 					item = null;
 					break;
@@ -178,6 +200,28 @@ common.factory('dataFactory', ['$http', function($http) {
 			
 			return itemToUpdate;
 		},
+		fromVolumeToOuvrage: function(serie, volume) {
+			var oe = findObj("Ouvrages").items.find(function(o) {
+				return o.Titre === volume.Titre;
+			});
+			
+			if (oe) {
+				oe.InSerie = true;
+			} else {
+				var ouvrage = this.newItem("Ouvrages");
+				
+				ouvrage.Titre = volume.Titre
+				ouvrage.Auteurs = serie.Auteurs;
+				ouvrage.Genre = serie.Genre;
+				ouvrage.SousGenre = serie.SousGenre;
+				ouvrage.Editions = serie.Editions;
+				ouvrage.Tags = serie.Tags;
+				
+				ouvrage.InSerie = true;
+				
+				return ouvrage;
+			}
+		},
 		add: function(col, item, callback) {
 			// TODO : try catch
 			submitData('add', col, item, function(item_added) {
@@ -189,12 +233,19 @@ common.factory('dataFactory', ['$http', function($http) {
 						obj_old.items.push(item_added);
 					}
 					
-					if (col === "Ouvrages") {
+					if (col === "Ouvrages" || col === "Series") {
 						var obj_bis_old = findObj("Auteurs");
+						var obj_ter_old = findObj("Tags");
 						if (obj_bis_old) {
 							storage.push({ collection: "Auteurs", items: new Array(item_added.Auteurs) });
 						} else {
 							obj_bis_old.items.push(item_added.Auteurs);
+						}
+						
+						if (obj_ter_old) {
+							storage.push({ collection: "Tags", items: new Array(item_added.Tags) });
+						} else {
+							obj_ter_old.items.push(item_added.Tags);
 						}
 					}
 				} else {
@@ -217,15 +268,26 @@ common.factory('dataFactory', ['$http', function($http) {
 					items_old[index_item_old] = item;
 				}
 				
-				if (col === "Ouvrages") {
-					var items_old = findObj("Auteurs").items;
+				if (col === "Ouvrages" && col === "Series") {
+					var items_bis_old = findObj("Auteurs").items;
 					item.Auteurs.forEach(function() {
-						var index_item_old = items_old.findIndex(function(i) {
+						var index_item_bis_old = items_bis_old.findIndex(function(i) {
 							return i._id === item._id;
 						});
 						
-						if (index_item_old !== -1) {
-							items_old[index_item_old] = item;
+						if (index_item_bis_old !== -1) {
+							items_bis_old[index_item_bis_old] = item;
+						}
+					});
+					
+					var items_ter_old = findObj("Tags").items;
+					item.Auteurs.forEach(function() {
+						var index_item_ter_old = items_ter_old.findIndex(function(i) {
+							return i._id === item._id;
+						});
+						
+						if (index_item_ter_old !== -1) {
+							items_ter_old[index_item_ter_old] = item;
 						}
 					});
 				}

@@ -21,6 +21,8 @@ const errorOutput = fs.createWriteStream('./stderr.log');
 const logger = new Console(output, errorOutput);
 
 databaseUrl = "mongodb://lev_user:lev_pass@ds147497.mlab.com:47497/db_lev";
+// databaseUrl = "mongodb://lev_user:lev_pass@ds111066.mlab.com:11066/db_lev_dev";
+
 
 mongoClient = require("mongodb").MongoClient;
 ObjectID = require('mongodb').ObjectID;
@@ -39,6 +41,12 @@ var insertDocument = function(db, col, doc, callback)
 					update_counter++;
 					
 					if (update_counter === doc.Auteurs.length) {
+						if (doc.Tags.length > 0) {
+							insertManyDocuments(db, "TAGS", doc.Tags, function() {
+												
+							});
+						}
+						
 						db.collection(col).insertOne(doc, function(err, result) {
 							assert.equal(err, null);
 							console.log("Ajout dans " + col + ".");
@@ -51,6 +59,12 @@ var insertDocument = function(db, col, doc, callback)
 					update_counter++;
 					
 					if (update_counter === doc.Auteurs.length) {
+						if (doc.Tags.length > 0) {
+							insertManyDocuments(db, "TAGS", doc.Tags, function() {
+												
+							});
+						}
+						
 						db.collection(col).insertOne(doc, function(err, result) {
 							assert.equal(err, null);
 							console.log("Ajout dans " + col + ".");
@@ -59,7 +73,110 @@ var insertDocument = function(db, col, doc, callback)
 					}
 				});
 			}
+		}
+	} else if (col === "SERIES" && doc.Auteurs !== undefined && doc.Auteurs.length >= 0) {
+		var update_counter = 0;
+		for(var i = 0 ; i < doc.Auteurs.length ; i++) {
+			var auteur = doc.Auteurs[i];
 			
+			if (doc.Auteurs[i]._id === undefined) {
+				insertDocument(db, "AUTEURS", doc.Auteurs[i], function(na) {
+					auteur = na;
+					update_counter++;
+					
+					if (update_counter === doc.Auteurs.length) {
+						update_counter = 0;
+						for(var j = 0 ; j < doc.Volumes.length ; j++) {
+							var ouvrage = doc.Volumes[j];
+							
+							if (doc.Volumes[j]._id === undefined) {
+								insertDocument(db, "OUVRAGES", doc.Volumes[i], function(no) {
+									ouvrage = no;
+									update_counter++;
+									
+									if (update_counter === doc.Volumes.length) {
+										if (doc.Tags.length > 0) {
+											insertManyDocuments(db, "TAGS", doc.Tags, function() {
+																
+											});
+										}
+										
+										db.collection(col).insertOne(doc, function(err, result) {
+											assert.equal(err, null);
+											console.log("Ajout dans " + col + ".");
+											callback(result);
+										});
+									}
+								});
+							} else {
+								updateDocument(db, "OUVRAGES", doc.Auteurs[i], function() {
+									update_counter++;
+									
+									if (update_counter === doc.Volumes.length) {
+										if (doc.Tags.length > 0) {
+											insertManyDocuments(db, "TAGS", doc.Tags, function() {
+																
+											});
+										}
+										
+										db.collection(col).insertOne(doc, function(err, result) {
+											assert.equal(err, null);
+											console.log("Ajout dans " + col + ".");
+											callback(result);
+										});
+									}
+								});
+							}
+						}
+					}
+				});
+			} else {
+				updateDocument(db, "AUTEURS", doc.Auteurs[i], function() {
+					update_counter++;
+					
+					if (update_counter === doc.Auteurs.length) {
+						update_counter = 0;
+						for(var j = 0 ; j < doc.Volumes.length ; j++) {
+							var ouvrage = doc.Volumes[j];
+							
+							if (doc.Volumes[j]._id === undefined) {
+								insertDocument(db, "OUVRAGES", doc.Volumes[j], function(no) {
+									ouvrage = no;
+									update_counter++;
+									
+									if (update_counter === doc.Volumes.length) {
+										insertManyDocuments(db, "TAGS", doc.Tags, function() {
+											
+										});
+										
+										db.collection(col).insertOne(doc, function(err, result) {
+											assert.equal(err, null);
+											console.log("Ajout dans " + col + ".");
+											callback(result);
+										});
+									}
+								});
+							} else {
+								updateDocument(db, "OUVRAGES", doc.Volumes[j], function() {
+									update_counter++;
+									
+									if (update_counter === doc.Volumes.length) {
+										insertManyDocuments(db, "TAGS", doc.Tags, function() {
+											
+										});
+										
+										db.collection(col).insertOne(doc, function(err, result) {
+											assert.equal(err, null);
+											console.log("Ajout dans " + col + ".");
+											callback(result);
+										});
+									}
+								});
+							}
+						}
+					}
+				});
+			}
 		}
 	} else {
 		db.collection(col).insertOne(doc, function(err, result) {
@@ -92,6 +209,10 @@ var updateDocument = function(db, col, doc, callback)
 					update_counter++;
 					
 					if (update_counter === doc.Auteurs.length) {
+						insertManyDocuments(db, "TAGS", doc.Tags, function() {
+											
+						});
+						
 						db.collection(col).updateOne({ _id: doc._id }, doc, function(err, result) {
 							assert.equal(err, null);
 							console.log("Mise a jour dans AUTEURS.");
@@ -104,6 +225,10 @@ var updateDocument = function(db, col, doc, callback)
 					update_counter++;
 					
 					if (update_counter === doc.Auteurs.length) {
+						insertManyDocuments(db, "TAGS", doc.Tags, function() {
+											
+						});
+						
 						doc._id = ObjectID(doc._id);
 						db.collection(col).updateOne({ _id: doc._id }, doc, function(err, result) {
 							assert.equal(err, null);
@@ -134,7 +259,7 @@ var updateDocument = function(db, col, doc, callback)
 
 var deleteDocument = function(db, col, doc, callback) 
 {
-	db.collection(col).deleteOne(doc._id , function(err, result) {
+	db.collection(col).deleteOne(doc._id, function(err, result) {
 		assert.equal(err, null);
 		console.log("Suppression dans " + col + ".");
 		callback();
@@ -201,7 +326,22 @@ var getFilename = function(request, response)
 			form.uploadDir = path.join(__dirname, '/images/' + urlpath.substring(6) + 's');
 			
 			form.on('file', function(field, file) {
-				fs.rename(file.path, path.join(form.uploadDir, file.name));
+				fs.stat((file.path, path.join(form.uploadDir, file.name)), function(err, stat) {
+					if(err == null) {
+						console.log('File exists');
+						fs.unlink(file.path, function(err) {
+							if (err) throw err;
+							console.log('successfully deleted : ' + file.path);
+						});
+					} else if(err.code == 'ENOENT') {
+						// file does not exist
+						fs.rename(file.path, path.join(form.uploadDir, file.name));
+					} else {
+						console.log('Some other error: ', err.code);
+					}
+				});
+				
+				// fs.rename(file.path, path.join(form.uploadDir, file.name));
 				response.write(path.join('images/' + urlpath.substring(6) + 's', file.name));
 			});
 			
@@ -306,24 +446,6 @@ var getFilename = function(request, response)
 					});
 				}
 				// TODO : Recherche de plusieurs éléments sur un critère
-			} else if (urlpath.match('^\/file\/')) {
-				// TODO : Upload du fichier (couverture) dans le dossier images
-				
-				// parse the incoming request containing the form data
-				/*
-				form.parse(request, function (err, fields, files) {
-					//Store the data from the fields in your data store.
-					//The data store could be a file or database or any other store based
-					//on your application.
-					response.writeHead(200, {
-						'content-type': 'text/plain'
-					});
-					response.write('received the data:\n\n');
-					
-					console.log(files);
-					
-				});
-				*/
 			} else {
 				console.log('Aucune operation effectuée.');
 			}

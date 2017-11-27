@@ -13,10 +13,12 @@ common.directive('selectGrid', function() {
 	}
 });
 
-common.directive('ajout', ['dataFactory', 'fileUploader', function(dataFactory, fileUploader) {
+common.directive('ajoutOS', ['dataFactory', 'fileUploader', function(dataFactory, fileUploader) {
 	return {
 		restrict: 'E',
 		controller: function($scope) {
+			$scope.uploadUrl = "/file/couverture";
+			
 			$scope.$watch(
 				function() { 
 					if ($scope.item) return $scope.item.Genre; 
@@ -28,23 +30,42 @@ common.directive('ajout', ['dataFactory', 'fileUploader', function(dataFactory, 
 				}
 			);
 			
+			$scope.$watch(
+				function() {
+					return $scope.colItem;
+				}, function() {
+					dataFactory.getAll($scope.colItem, function(res){
+						$scope.listItems = res;
+					});
+				}
+			);
+			
+			$scope.$on('upload', function(event, data) {
+				if (data) $scope.item.Couverture = data;
+			});
+			
 			$scope.labelMode = function() {
 				if ($scope.item && $scope.item._id) {
-					return "Modifier un " + $scope.colItem;
+					if ($scope.colItem == "Ouvrages") {
+						return "Modifier un Ouvrage";
+					} else if ($scope.colItem == "Series") {
+						return "Modifier une Série";
+					}
 				} else {
-					return "Ajouter un " + $scope.colItem;
+					if ($scope.colItem == "Ouvrages") {
+						return "Ajouter un Ouvrage";
+					} else if ($scope.colItem == "Series") {
+						return "Ajouter une Série";
+					}
 				}
 			}
 			
 			$scope.itemsProposes = [];
-			dataFactory.getAll($scope.colItem, function(res){
-				$scope.listItems = res;
-			});
 			
 			$scope.filtrerItemsExistants = function() {
 				$scope.itemsProposes = [];
 				
-				if ($scope.ouvrage.Titre) {
+				if ($scope.item.Titre) {
 					$scope.listItems.find(function(i) {
 						if (i.Titre.match($scope.item.Titre)) {
 							$scope.itemsProposes.push(i);
@@ -61,19 +82,17 @@ common.directive('ajout', ['dataFactory', 'fileUploader', function(dataFactory, 
 				$scope.g_selected = genre;
 				$scope.item.Genre = genre;
 				
+				if (genre) {
+					var sg = $scope.genres.find(function(g) {
+						return g.genre === genre;
+					});
+
+					$scope.item.SousGenre = sg.sousGenres[0];
+				}
+				
 				if($scope.item.Genre === "Dessin" && $scope.item.Auteurs.length >= 1 && $scope.item.Dessinateur === undefined) {
 					$scope.item.Dessinateur = $scope.item.Auteurs[0];
 					$scope.item.Scenariste = $scope.item.Auteurs[0];
-				}
-			}
-			
-			$scope.uploadCouverture = function(){
-				var file = $scope.fileSelected;
-				var uploadUrl = "/file/couverture";
-				if (colItem == 'Ouvrages') {
-					fileUploader.uploadFileToUrl(file, uploadUrl, function(filename) {
-						$scope.item.Couverture = filename;
-					});
 				}
 			}
 		},
@@ -83,10 +102,9 @@ common.directive('ajout', ['dataFactory', 'fileUploader', function(dataFactory, 
 			genres: '=genres',
 			submit: '&onSubmit'
 		},
-		templateUrl: './app/templates/biblio/ajout.tpl'
+		templateUrl: './app/templates/biblio/ajoutOuvrageSerie.tpl'
 	}
 }]);
-
 
 // OUVRAGES
 common.directive('afficheOuvrage', function() {
@@ -106,77 +124,6 @@ common.directive('afficheOuvrage', function() {
 		templateUrl: './app/templates/biblio/ouvrage.tpl'
 	}
 });
-
-common.directive('ajoutOuvrage', ['dataFactory', 'fileUploader', function(dataFactory, fileUploader) {
-	return {
-		restrict: 'E',
-		controller: function($scope) {
-			$scope.$watch(
-				function() { 
-					if ($scope.ouvrage) return $scope.ouvrage.Genre; 
-					else return null; 
-				}, function(newValue, oldValue) {
-					if (newValue !== oldValue) {
-						$scope.showSG(newValue);
-					}
-				}
-			);
-			
-			$scope.labelMode = function() {
-				if ($scope.ouvrage && $scope.ouvrage._id) {
-					return "Modifier un ouvrage";
-				} else {
-					return "Ajouter un ouvrage";
-				}
-			}
-			
-			$scope.ouvragesProposes = [];
-			dataFactory.getAll("Ouvrages", function(res){
-				$scope.listOuvrages = res;
-			});
-			
-			$scope.filtrerOuvragesExistants = function() {
-				$scope.ouvragesProposes = [];
-				
-				if ($scope.ouvrage.Titre) {
-					$scope.listOuvrages.find(function(o) {
-						if (o.Titre.match($scope.ouvrage.Titre)) {
-							$scope.ouvragesProposes.push(o);
-						}
-					});
-				}
-			}
-			
-			$scope.dejaExistant = function(o) {
-				$scope.ouvrage = angular.copy(o);
-			}
-			
-			$scope.showSG = function(genre) {
-				$scope.g_selected = genre;
-				$scope.ouvrage.Genre = genre;
-				
-				if($scope.ouvrage.Genre === "Dessin" && $scope.ouvrage.Auteurs.length >= 1 && $scope.ouvrage.Dessinateur === undefined) {
-					$scope.ouvrage.Dessinateur = $scope.ouvrage.Auteurs[0];
-					$scope.ouvrage.Scenariste = $scope.ouvrage.Auteurs[0];
-				}
-			}
-			
-			$scope.uploadCouverture = function(){
-				var file = $scope.fileSelected;
-				var uploadUrl = "/file/couverture";
-				fileUploader.uploadFileToUrl(file, uploadUrl, function(filename) {
-					$scope.ouvrage.Couverture = filename;
-				});
-			}
-		},
-		scope: {
-			ouvrage: '=ouvrage',
-			genres: '=genres',
-			submit: '&onSubmit'
-		},
-		templateUrl: './app/templates/biblio/ajoutOuvrage.tpl'
-	}
-}]);
 
 common.directive('selectionOuvrage', [ 'auth', function(auth) {
 	return {
@@ -198,19 +145,38 @@ common.directive('selectionOuvrage', [ 'auth', function(auth) {
 			}
 			
 			$scope.markAsPossessed = function(index) {
-				auth.updateBiblio({ 'index': index, 'Nb': 1 }, $scope.ouvrage._id);
+				auth.updateBiblio({ 'index': index, 'Nb': 1 }, $scope.item._id);
 			}
 			
 			$scope.markAsRead = function(id) {
+				var bool = auth.isRead(id);
+
 				if (id) {
-					auth.updateBiblio({ '_id': id, 'Lu': true, 'Possede': [] });
+					auth.updateBiblio({ '_id': id, 'Lu': !bool, 'Possede': [] });
+				}
+				
+				isRead();
+			}
+			
+			var isRead = function() {
+				if ($scope.item && auth.isRead($scope.item._id)) {
+					$scope.read = "Lu";
+					$scope.readStyle = {'background-color' : '#008000'};
+					return true;
+				} else {
+					$scope.read = "Non Lu";
+					$scope.readStyle = {'background-color' : '#778899'};
+					return false;
 				}
 			}
+			
+			$scope.$watch(function () { return $scope.item }, isRead);
 		},
 		scope: {
-			ouvrage: '=ouvrage',
+			item: '=item',
 			genres: '=genres',
-			modifier: '&onModifier'
+			modifier: '&onModifier',
+			colItem: '=colItem'
 		},
 		templateUrl: './app/templates/biblio/selectionOuvrage.tpl'
 	}
@@ -225,6 +191,7 @@ common.directive('consultOuvrages', function() {
 			}
 		},
 		scope: {
+			series: '=series',
 			ouvrages: '=ouvrages',
 			titre: '=titre',
 			selection: '&onSelection',
@@ -232,70 +199,6 @@ common.directive('consultOuvrages', function() {
 		templateUrl: './app/templates/biblio/consultOuvrages.tpl'
 	}
 });
-
-// SERIES
-common.directive('ajoutSerie', ['dataFactory', 'fileUploader', function(dataFactory, fileUploader) {
-	return {
-		restrict: 'E',
-		controller: function($scope) {
-			$scope.$watch(
-				function() { 
-					if ($scope.serie) return $scope.serie.Genre; 
-					else return null; 
-				}, function(newValue, oldValue) {
-					if (newValue !== oldValue) {
-						$scope.showSG(newValue);
-					}
-				}
-			);
-			
-			$scope.labelMode = function() {
-				if ($scope.serie && $scope.serie._id) {
-					return "Modifier une série";
-				} else {
-					return "Ajouter une série";
-				}
-			}
-			
-			$scope.seriesProposes = [];
-			dataFactory.getAll("Series", function(res){
-				$scope.listSeries = res;
-			});
-			
-			$scope.filtrerSeriesExistantes = function() {
-				$scope.seriesProposes = [];
-				
-				if ($scope.serie.Titre) {
-					$scope.listSeries.find(function(s) {
-						if (s.Titre.match($scope.serie.Titre)) {
-							$scope.seriesProposes.push(s);
-						}
-					});
-				}
-			}
-			
-			$scope.dejaExistant = function(s) {
-				$scope.serie = angular.copy(s);
-			}
-			
-			$scope.showSG = function(genre) {
-				$scope.g_selected = genre;
-				$scope.serie.Genre = genre;
-				
-				if($scope.serie.Genre === "Dessin" && $scope.serie.Auteurs.length >= 1 && $scope.serie.Dessinateur === undefined) {
-					$scope.serie.Dessinateur = $scope.serie.Auteurs[0];
-					$scope.serie.Scenariste = $scope.serie.Auteurs[0];
-				}
-			}
-		},
-		scope: {
-			serie: '=serie',
-			genres: '=genres',
-			submit: '&onSubmit'
-		},
-		templateUrl: './app/templates/biblio/ajoutSerie.tpl'
-	}
-}]);
 
 // AUTEURS
 common.directive('ajoutAuteur', ['dataFactory', 'compareArraysFilter', function(dataFactory, compareArraysFilter) {
@@ -337,9 +240,9 @@ common.directive('ajoutAuteur', ['dataFactory', 'compareArraysFilter', function(
 			$scope.addAuteur = function(auteur) {
 				$scope.auteurs.push(auteur);
 				
-				if($scope.ouvrage.Genre === "Dessin" && $scope.auteurs.length === 1) {
-					$scope.ouvrage.Dessinateur = auteur;
-					$scope.ouvrage.Scenariste = auteur;
+				if($scope.item.Genre === "Dessin" && $scope.auteurs.length === 1) {
+					$scope.item.Dessinateur = auteur;
+					$scope.item.Scenariste = auteur;
 				}
 				
 				$scope.PrenomNom = '';
@@ -349,13 +252,13 @@ common.directive('ajoutAuteur', ['dataFactory', 'compareArraysFilter', function(
 			$scope.removeAuteur = function(index) {
 				var removed_auteur = $scope.auteurs.splice(index, 1)[0];
 				
-				if ($scope.ouvrage) {
-					if($scope.ouvrage.Genre === "Dessin" && $scope.auteurs.length >= 1) {
-						if ($scope.ouvrage.Dessinateur.PrenomNom === removed_auteur.PrenomNom) {
-							$scope.ouvrage.Dessinateur = $scope.auteurs[0];
+				if ($scope.item) {
+					if($scope.item.Genre === "Dessin" && $scope.auteurs.length >= 1) {
+						if ($scope.item.Dessinateur.PrenomNom === removed_auteur.PrenomNom) {
+							$scope.item.Dessinateur = $scope.auteurs[0];
 						}
-						if ($scope.ouvrage.Scenariste.PrenomNom  === removed_auteur.PrenomNom) {
-							$scope.ouvrage.Scenariste = $scope.auteurs[0];
+						if ($scope.item.Scenariste.PrenomNom  === removed_auteur.PrenomNom) {
+							$scope.item.Scenariste = $scope.auteurs[0];
 						}
 					}
 				}	
@@ -363,12 +266,140 @@ common.directive('ajoutAuteur', ['dataFactory', 'compareArraysFilter', function(
 		},
 		scope: {
 			auteurs: '=auteurs',
-			ouvrage: '=ouvrage',
-			serie: '=serie'
+			item: '=item',
+			type: '=type'
 		},
 		templateUrl: './app/templates/biblio/ajoutAuteur.tpl'
 	}
 }]);
+
+common.directive('ajoutTA', ['dataFactory', 'compareArraysFilter', function(dataFactory, compareArraysFilter) {
+	return {
+		restrict: 'E',
+		controller: function($scope) {
+			$scope.itemsProposes = [];
+			dataFactory.getAll($scope.itemCol, function(res){
+				$scope.listItems = res;
+			});
+			
+			$scope.labelMode = function() {
+				if ($scope.itemCol == "Tags") {
+					return "Mot(s)-clé(s) :";
+				} else {
+					return "Auteur(s) :";
+				}
+			}
+			
+			$scope.filtrerExistant = function() {
+				$scope.itemsProposes = [];
+				
+				if ($scope.newData) {
+					$scope.listItems.find(function(a) {
+						// TODO: Recherche sur les items (algorithme)
+						if (a[$scope.data].toLowerCase().match($scope.newData.toLowerCase())) {
+							$scope.itemsProposes.push(a);
+						}
+					});
+				}
+			}
+			
+			$scope.saveItem = function(dt) {
+				if (dt) {
+					var item = {};
+					item[$scope.data] = dt
+
+					/*
+					var index_sep_pn = pn.lastIndexOf(' ');
+					auteur.Nom = pn.substring(index_sep_pn + 1);
+					auteur.Prenom = pn.substring(0, index_sep_pn);
+					*/
+					
+					// TODO : vérifier que l'auteur n'est pas déjà dans la liste
+					$scope.addItem(item);
+				}
+			}
+			
+			$scope.addItem = function(item) {
+				$scope.items.push(item);
+				
+				/*
+				if ($scope.parent.Genre === "Dessin" && $scope.auteurs.length === 1) {
+					$scope.parent.Dessinateur = auteur;
+					$scope.parent.Scenariste = auteur;
+				}
+				*/
+				
+				$scope.newData = '';
+				$scope.itemsProposes = [];
+			}
+			
+			$scope.removeItem = function(index) {
+				var removed_item = $scope.items.splice(index, 1)[0];
+				
+				// TODO : $emit et $on sur modification
+				/*
+				if ($scope.parent) {
+					if($scope.parent.Genre === "Dessin" && $scope.auteurs.length >= 1) {
+						if ($scope.parent.Dessinateur.PrenomNom === removed_auteur.PrenomNom) {
+							$scope.parent.Dessinateur = $scope.auteurs[0];
+						}
+						if ($scope.parent.Scenariste.PrenomNom  === removed_auteur.PrenomNom) {
+							$scope.parent.Scenariste = $scope.auteurs[0];
+						}
+					}
+				}
+				*/
+			}
+		},
+		scope: {
+			items: '=children',
+			itemCol: '=childCol',
+			parent: '=item',
+			parentCol: '=itemCol',
+			data: '=data',
+			libData: '=libData'
+		},
+		templateUrl: './app/templates/biblio/ajoutAuteurTag.tpl'
+	}
+}]);
+
+// SERIES
+common.directive('volumeSerie', function() {
+	return {
+		restrict: 'E',
+		controller: function($scope) {
+			$scope.sv = undefined;
+			
+			$scope.changeNbVolumes = function() {
+				if ($scope.TitreSerie == "") {
+					// TODO : Message d'erreur si pas de titre de série
+				} else if ($scope.TitreSerie && $scope.NbVolumes > 1) {
+					if (!$scope.Volumes) $scope.Volumes = [];
+					for (var i = 0 ; i < $scope.NbVolumes ; i++) {
+						if (!$scope.Volumes[i]) $scope.Volumes[i] = { 'Numero': i+1, 'Titre': $scope.TitreSerie + ' ' + (i+1) };
+					}
+					
+					// TODO : diminuer le nombre
+				}
+			}
+			
+			$scope.showVolume = function(v) {
+				if ($scope.sv == v) {
+					$scope.sv = undefined;
+				} else {
+					$scope.sv = v;
+				}
+			}
+		},
+		scope: {
+			TitreSerie: '=titreSerie',
+			NbVolumes: '=nbVolumes',
+			Volumes: '=listVolumes',
+			mode: '=mode'
+		},
+		templateUrl: './app/templates/biblio/volumeSerie.tpl'
+	}
+});
 
 // EDITIONS
 common.directive('ajoutEdition', function() {
@@ -480,19 +511,33 @@ common.directive('membresAuthentifie', ['auth', 'fileUploader', 'dataFactory', f
 	return {
 		restrict: 'E',
 		controller: function($scope) {
+			$scope.uploadUrl = "/file/couverture";
+			
 			if (auth.isConnected()) {
 				dataFactory.getItemByParam("Utilisateurs", { 'Pseudo' : auth.getUser() }, function(res){
 					$scope.utilisateur = res;
 				});
 			}
 			
-			$scope.uploadProfil = function() {
-				var file = $scope.fileSelected;
-				var uploadUrl = "/file/profil";
-				fileUploader.uploadFileToUrl(file, uploadUrl, function(filename) {
-					$scope.utilisateur.ImgProfil = filename;
-				});
-			}
+			$scope.$watch(
+				function() {
+					return $scope.img;
+				}, function() {
+					if ($scope.img) {
+						$scope.utilisateur.ImgProfil = $scope.img;
+					}
+				}
+			);
+			
+			$scope.$on('upload', function(event, data) {
+				if (data) {
+					$scope.utilisateur.ImgProfil = data;
+					
+					dataFactory.update("Utilisateurs", {'ImgProfil': filename}, function() {
+						// TODO : Update auth
+					});
+				}
+			});
 			
 			$scope.verifNewMdp = function(newMdp, verifMdp) {
 				if (newMdp == verifMdp) {
@@ -510,7 +555,6 @@ common.directive('membresAuthentifie', ['auth', 'fileUploader', 'dataFactory', f
 	}
 }]);
 
-
 // DIRECTIVES POUR UPLOAD
 common.directive('fileModel', ['$parse', function ($parse) {
 	return {
@@ -518,7 +562,7 @@ common.directive('fileModel', ['$parse', function ($parse) {
 	   link: function(scope, element, attrs) {
 			var model = $parse(attrs.fileModel);
 			var modelSetter = model.assign;
-
+			
 			element.bind('change', function(){
 				scope.$apply(function(){
 					modelSetter(scope, element[0].files[0]);
@@ -527,27 +571,3 @@ common.directive('fileModel', ['$parse', function ($parse) {
 	    }
 	};
 }]);
-
-/*
-common.directive('modalDialog', function() {
-	return {
-		restrict: 'E',
-		scope: {
-		  show: '=show'
-		},
-		replace: true, // Replace with the template below
-		transclude: true, // we want to insert custom content inside the directive
-		link: function(scope, element, attrs) {
-			scope.dialogStyle = {};
-			if (attrs.width)
-				scope.dialogStyle.width = attrs.width;
-			if (attrs.height)
-				scope.dialogStyle.height = attrs.height;
-			scope.hideModal = function() {
-				scope.show = false;
-			};
-		},
-		template: './app/templates/modalWindow.tpl'
-	};
-});
-*/

@@ -1,0 +1,61 @@
+PROBLEMES A SOLUTIONNER
+------------------------
+[+] TECHNIQUE
+
+[X] Echec du tri sur les auteurs existants, lorsqu'il y a déjà des auteurs -
+[-] Pas d'update sur les listes d'ouvrages et d'auteurs déjà chargées -
+[-] Besoin de recharger la page après la connexion d'un utilisateur -
+[-] Pas de titre sur modifier ouvrage -
+[-] Suppression de l'image de couverture après enregistrement -
+
+[/]
+
+[+] ERGONOMIQUE
+	
+[-] Lors de l'ajout, permettre de noter comme lu ou possédé -
+	[-] Passer sur modifier ? -
+	[-] Passer sur un autre ajout ? -
+	[-] Laisser le choix ? -
+	
+[/]
+
+[+] MISE EN FORME
+
+[-] Derniers Ajouts : pas de padding bottom -
+[-] Ajout d'éditions : textes non centré horizontalement -
+[-] Ajout d'auteurs : auteurs pas mulitligne -
+[-] Ajout de tags :	tags multiligne -
+[-] Ajout d'ouvrages : couverture au dessus -
+
+[/]
+
+[+] BUG URGENT / FACILE A CORRIGER
+
+[X] Problème lors de l'ajout d'un auteur sur la propriété 'Genre' -- directives.js:371/364
+	-> Changement de template d'ajout : ouvrage -> item
+[X] Problème lors de l'upload de couverture -- directives.js:86
+	-> Ajout d'un $scope
+[X] Impossible d'ajouter un ouvrage : propriété 'Auteurs' est undefined -- controllers.js:40:22
+	-> Remplacement de variable : ouvrage -> itemToAdd
+[X] Problème lors de la modification d'ouvrage -
+	-> Confusion entre item et ouvrage
+[X] Problème lors du chargement d'une couverture : mauvaise image affichée -
+	-> Suppression des doublons de couvertures : vérification de l'existence d'un fichier avec le même nom
+	-> Utilisation de la directive dans un controller au lieu d'une directive
+	[X] Plus d'image affichée lors de la modification -
+		-> Condition ajouté dans le template sur l'affichage de l'image
+		-> Modification similaire appliquée sur imgProfil de l'utilisateur
+[X] $scope.selection n'est pas une fonction -- directives.js:257:23
+	-> OK
+[X] Filter sur des arrays vides -
+	-> Ajout d'une condition if sur l'existence de l'array
+[X] Pas de SousGenre enregistré -
+	-> utilisation de ng-options et ng-model avec affectation par défaut dans showSG
+[1] Les tags déjà existants n'apparaissent pas  -
+	-> ajout côté serveur de la logique / reste à voir pour update
+[X] Problème de hashkey lors de l'envoi d'une nouvelle série -
+	-> Ajout de JSON.Parse et anuglar.ToJSON dans le controller à submit
+[X] Recherche d'auteurs case sensitive -
+	-> Ajout de toLowerCase à chacun
+	
+[/]
