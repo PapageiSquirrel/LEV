@@ -1,0 +1,23 @@
+<div class="container">
+	<div [hidden]="submitted">
+		<form (ngSubmit)="onSubmit()" #utilisateurForm="ngForm">
+			<div class="form-group col-xs-5">
+				<label for="Pseudo">Pseudonyme :</label>
+				<input type="text" id="Pseudo" name="Pseudo" #Pseudo="ngModel" class="form-control" [(ngModel)]="utilisateur.Pseudo" required />
+			</div>
+		
+			<div class="form-group col-xs-5">
+				<label for="MotDePasse">Mot de passe :</label>
+				<input type="password" id="MotDePasse" name="MotDePasse" #MotDePasse="ngModel" class="form-control" [(ngModel)]="utilisateur.mot_de_passe" required />
+			</div>
+			
+			<div class="form-group col-xs-5">
+				<button type="submit" class="form-control" (click)="verifUser()">Se connecter</button>
+			</div>
+			
+			<div class="form-group col-xs-5">
+				<span class="msg-error">{{error}}</span>
+			</div>
+		</form>
+	</div>
+</div>

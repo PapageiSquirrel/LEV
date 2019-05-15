@@ -1,0 +1,18 @@
+<div *ngIf="utilisateur.pseudo == ''">
+	<button type="button" class="btn btn-primary" (click)="template_selected = 'inscription'">Inscription</button>
+	<button type="button" class="btn btn-success" (click)="template_selected = 'connexion'">Connexion</button>
+
+	<div *ngIf="template_selected == 'inscription'">
+		<app-membres-inscription [(utilisateur)]="utilisateur" ngDefaultControl></app-membres-inscription>
+	</div>
+	<div *ngIf="template_selected == 'connexion'">
+		<app-membres-connexion [(utilisateur)]="utilisateur" ngDefaultControl></app-membres-connexion>
+	</div>
+	<div *ngIf="template_selected == null">
+		Pas de template
+	</div>
+</div>
+
+<div *ngIf="utilisateur.pseudo != ''">
+	<app-membres-profile [(ngModel)]="utilisateur"></app-membres-profile>
+</div>
