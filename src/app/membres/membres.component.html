@@ -1,4 +1,4 @@
-<div *ngIf="utilisateur.pseudo == ''">
+<div> <!--*ngIf="utilisateur.pseudo == ''"-->
 	<button type="button" class="btn btn-primary" (click)="template_selected = 'inscription'">Inscription</button>
 	<button type="button" class="btn btn-success" (click)="template_selected = 'connexion'">Connexion</button>
 
@@ -13,6 +13,6 @@
 	</div>
 </div>
 
-<div *ngIf="utilisateur.pseudo != ''">
+<div *ngIf="false"> <!--*ngIf="utilisateur.pseudo != ''"-->
 	<app-membres-profile [(ngModel)]="utilisateur"></app-membres-profile>
 </div>

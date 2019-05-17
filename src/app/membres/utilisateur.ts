@@ -4,14 +4,14 @@ export class Utilisateur {
 	id: number;
 	pseudo: string;
 	email: string;
-	mot_de_passe: string;
+	motdepasse: string;
 	biblio: Ouvrage[];
 
 	constructor(id: number, pseudo: string, email: string, mdp: string) {
 		this.id = id;
 		this.pseudo = pseudo;
 		this.email = email;
-		this.mot_de_passe = mdp;
+		this.motdepasse = mdp;
 	}
 
 	ajouterOuvrage(o: Ouvrage): void {

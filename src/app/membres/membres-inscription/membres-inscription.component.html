@@ -12,14 +12,14 @@
 		
 		<div class="form-group col-xs-5">
 			<label>Mot de passe :</label>
-			<input type="text" name="text_auteur" class="form-control" [(ngModel)]="utilisateur.mot_de_passe" 
-				(change)="verifMdp(utilisateur.mot_de_passe, mdp)" />
+			<input type="text" name="text_auteur" class="form-control" [(ngModel)]="utilisateur.motdepasse" 
+				(change)="verifMdp(utilisateur.motdepasse, mdp)" />
 		</div>
 		
 		<div class="form-group col-xs-5">
 			<label>Vérification du mot de passe :</label>
 			<input type="text" name="text_auteur" class="form-control" [(ngModel)]="mdp" 
-				(change)="verifMdp(utilisateur.mot_de_passe, mdp)" />
+				(change)="verifMdp(utilisateur.motdepasse, mdp)" />
 		</div>
 		
 		<div class="form-group col-xs-5">

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Utilisateur } from '../utilisateur';
+import { ApiService } from '../../api.service';
 
 @Component({
   selector: 'app-membres-inscription',
@@ -35,7 +36,7 @@ export class MembresInscriptionComponent implements OnInit {
 		}
 	};*/
 
-  constructor() { }
+  constructor(private apiService: ApiService) { }
 
   ngOnInit() {
   	
@@ -53,7 +54,7 @@ export class MembresInscriptionComponent implements OnInit {
 
   createUser() {
   	if (this.verif) {
-  		// API
+  		this.apiService.createUtilisateur(this.utilisateur).subscribe(res => this.utilisateur = res);
   	}
   }
 }

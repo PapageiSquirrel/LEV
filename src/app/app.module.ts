@@ -1,21 +1,31 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
-import { BiblioComponent } from './biblio/biblio.component';
+
 import { AuteursComponent } from './auteurs/auteurs.component';
 import { OuvragesComponent } from './ouvrages/ouvrages.component';
 import { EditionsComponent } from './editions/editions.component';
 import { TagsComponent } from './tags/tags.component';
 import { AccueilComponent } from './accueil/accueil.component';
 import { ForumComponent } from './forum/forum.component';
+
 import { MembresComponent } from './membres/membres.component';
 import { MembresConnexionComponent } from './membres/membres-connexion/membres-connexion.component';
 import { MembresInscriptionComponent } from './membres/membres-inscription/membres-inscription.component';
 import { MembresProfileComponent } from './membres/membres-profile/membres-profile.component';
+
+import { BiblioComponent } from './biblio/biblio.component';
 import { OuvrageDetailComponent } from './ouvrages/ouvrage-detail/ouvrage-detail.component';
+import { AjoutOuvrageSerieComponent } from './biblio/ajout-ouvrage-serie/ajout-ouvrage-serie.component';
+import { SelectionOuvrageSerieComponent } from './biblio/selection-ouvrage-serie/selection-ouvrage-serie.component';
+import { ConsultOuvrageSerieComponent } from './biblio/consult-ouvrage-serie/consult-ouvrage-serie.component';
+
+//import { HttpClient } from '@angular/common/http';
 
 import { OuvragesService } from './ouvrages.service';
 import { AuteursService } from './auteurs.service';
@@ -37,9 +47,13 @@ import { Utilisateur } from './membres/utilisateur';
     MembresConnexionComponent,
     MembresInscriptionComponent,
     MembresProfileComponent,
-    OuvrageDetailComponent
+    OuvrageDetailComponent,
+    AjoutOuvrageSerieComponent,
+    SelectionOuvrageSerieComponent,
+    ConsultOuvrageSerieComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule

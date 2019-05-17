@@ -19,7 +19,7 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
   public getUtilisateurs(): Observable<Utilisateur[]> {
-  	const url = '${API_URL}/utilisateurs';
+  	const url = API_URL + '/api/utilisateurs';
   	return this.http
     	.get<Utilisateur[]>(url)
     	.pipe(
@@ -34,7 +34,7 @@ export class ApiService {
   }
 
 	public getUtilisateurByPseudoAndMdp(pseudo: string, mdp: string): Observable<Utilisateur> {
-		const url = '${API_URL}/utilisateurs/?pseudo=${pseudo}&mot_de_passe=${mdp}';
+		const url = API_URL + '/api/utilisateurs/?pseudo=${pseudo}&mot_de_passe=${mdp}';
 		return this.http
 			.get<Utilisateur>(url)
 			.pipe(
@@ -43,7 +43,7 @@ export class ApiService {
 	}
 
 	public createUtilisateur(utilisateur: Utilisateur) : Observable<Utilisateur> {
-		const url = '${API_URL}/utilisateurs';
+		const url = API_URL + '/api/utilisateurs/add';
 		return this.http
 			.post<Utilisateur>(url, utilisateur, httpOptions)
 			.pipe(
