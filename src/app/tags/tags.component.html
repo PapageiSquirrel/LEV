@@ -1,3 +1,21 @@
-<p>
-  tags works!
-</p>
+<div>
+	<div class="grid">
+		<label>Tag(s) :</label>
+		
+		<div class="input-group col-xs-12 nopadding">
+			<input name="nom" type="text" class="form-control" placeholder="Mot-clé" [(ngModel)]="nom" />
+			<div class="input-group-append">
+				<button class="btn btn-success" type="button" (click)="sauveTag(nom)">+</button>
+			</div>
+		</div>
+	
+		<div class="form-inline col-xs-12">
+			<div *ngFor="let t of tags; let i = index" class="input-group col-xs-6 row">
+				<span class="input-group-addon" id="basic-addon1">{{t.nom}}</span>
+				<span class="input-group-append">
+					<button class=" btn btn-secondary suppr" type="button" (click)="suppTag(i)">-</button>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Ouvrage } from '../ouvrages/ouvrage';
-import { OuvragesService } from '../ouvrages.service';
+import { Ouvrage } from '../Models/ouvrage';
+import { Serie } from '../Models/serie';
+import { Genre, SousGenre } from '../Models/genre';
+import { Tag } from '../Models/tag';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-biblio',
@@ -10,23 +13,42 @@ import { OuvragesService } from '../ouvrages.service';
 export class BiblioComponent implements OnInit {
   title: string;
   ouvrages: Ouvrage[];
+  genres: Genre[];
+  tags: Tag[];
+  mode: string;
+  item: Ouvrage|Serie;
+  colItem: string;
 
-  constructor(private ouvragesService: OuvragesService) { 
+  constructor(private apiService: ApiService) { 
     this.title = "Ma Bibliothèque";
   }
 
-  getOuvrages(): void {
-  	this.ouvragesService.getOuvrages().subscribe(ouvrages => this.ouvrages = ouvrages);
+  private getOuvrages(): void {
+  	this.apiService.getObjectsList<Ouvrage[]>('ouvrages').subscribe(ouvrages => this.ouvrages = ouvrages);
+  }
+
+  private getGenres(): void {
+    this.apiService.getObjectsListJoinedByKey<Genre[]>('code', 'codegenre', 'genres', 'sous_genres').subscribe(genres => this.genres = genres);
+  }
+
+  private getTags(): void {
+    this.apiService.getObjectsList<Tag[]>('tags').subscribe(tags => this.tags = tags);
   }
 
   ngOnInit() {
+    this.mode = 'consult';
+
+    this.getGenres();
+    this.getTags();
   	this.getOuvrages();
   }
 
-  /*$scope.genres = listFactory.getAllGenres();
-  // Ajouter une catégorie ? ou seulement des tags
-  // $scope.categories = listFactory.getAllCategories();
-  
+  private initMode(mode: string, param: string) {
+    this.mode = mode;
+    if (param) this.colItem = param;
+  }
+
+  /*
   dataFactory.getAll("Series", function(res) {
     $scope.series = [];
     if (res) {
@@ -42,26 +64,6 @@ export class BiblioComponent implements OnInit {
     if (res) {
       res.forEach(function(o) {
         $scope.ouvrages.push(dataFactory.updateItem("Ouvrages", o));
-      });
-    } else {
-      // TODO : Afficher un msg d'erreur
-    }
-  });
-  dataFactory.getAll("Auteurs", function(res) {
-    $scope.auteurs = [];
-    if (res) {
-      res.forEach(function(a) {
-        $scope.auteurs.push(dataFactory.updateItem("Auteurs", a));
-      });
-    } else {
-      // TODO : Afficher un msg d'erreur
-    }
-  });
-  dataFactory.getAll("Tags", function(res) {
-    $scope.tags = [];
-    if (res) {
-      res.forEach(function(t) {
-        $scope.tags.push(dataFactory.updateItem("Tags", t));
       });
     } else {
       // TODO : Afficher un msg d'erreur

@@ -1,33 +1,35 @@
-<div class="container-fluid" ng-init="action = 'Consult';">
+<div class="container-fluid">
 	<div class="row">
-		<div class="col-md-1">
-			<nav class="navbar navbar-nav">
-				<a role="button" href="#/biblio">Ma Biblio</a> <!--ng-show="user != 'Invité'"-->
-				<ul class="nav nav-pills nav-stacked"> <!--ng-show="user != 'Invité'"-->
-					<li role="presentation"><a href="#/biblio" ng-click="initAjout('Ouvrages')">Ajouter un ouvrage</a>
-					<li role="presentation"><a href="#/biblio" ng-click="initAjout('Series')">Ajouter une série</a>
-					<li role="presentation"><a href="#/biblio" ng-click="action = 'Consult';">Consulter</a></li>
-				</ul>
-				
-				<a role="button" href="#/biblio">Biblio Comp</a>
+		<div class="col-md-2">
+			<nav id="menu" class="navbar navbar-nav border rounded">
+				<a role="button" href="#/biblio"><span class="text-left">Ma Biblio</span></a> <!--ng-show="user != 'Invité'"-->
+				<div class="btn-group-vertical">
+					<button class="btn btn-success" type="button" (click)="initMode('ajout', 'ouvrages')">Ajouter un ouvrage</button>
+					<button class="btn btn-success" (click)="initMode('ajout', 'series')">Ajouter une série</button>
+					<button class="btn btn-success" (click)="initMode('consult', null);">Consulter</button>
+				</div>
+				<a role="button" href="#/biblio"><span class="text-left">Biblio Comp</span></a>
+				<div>
+					<button class="btn btn-secondary">Consulter</button>
+				</div>
 			</nav>
 		</div>
 
-		<div class="col-md-8 nopadding">
-			<!--
-			<ajout-o-s ng-show="action == 'Ajout'" item="itemToAdd" col-item="colItem" genres="genres" on-submit="submit(colItem)">
-				
-			</ajout-o-s>
+		<div class="col-md-7 nopadding">
+			<div *ngIf="mode == 'ajout'">
+				<app-ajout-ouvrage-serie [(item)]="item" [colItem]="colItem" [genres]="genres">
+				</app-ajout-ouvrage-serie> <!--on-submit="submit(colItem)"-->
+			</div>
 			
-			<selection-ouvrage ng-show="action == 'Selection'" item="item" genres="genres" on-modifier="modifierOuvrage()" col-item="colItem">
-			
-			</selection-ouvrage>
-			
-			<consult-ouvrages ng-show="action == 'Consult' || action == 'Selection'" 
-				titre="'Mes Ouvrages'" series="series" ouvrages="ouvrages" on-selection="detailOuvrage">
-				
-			</consult-ouvrages>
-			-->
+			<div *ngIf="mode == 'selection'">
+				<app-selection-ouvrage-serie [(item)]="item" [colItem]="colItem" [genres]="genres">
+				</app-selection-ouvrage-serie> <!--on-modifier="modifierOuvrage()"-->
+			</div>
+
+			<div *ngIf="action == 'consult' || action == 'selection'">
+				<app-consult-ouvrage-serie [titre]="'Mes Ouvrages'" [series]="series" [ouvrages]="ouvrages">
+				</app-consult-ouvrage-serie> <!--on-selection="detailOuvrage"-->
+			</div>
 		</div>
 			
 		<div class="col-md-3">
@@ -35,11 +37,9 @@
 				<div class="panel-heading"><h3>Derniers Ajouts</h3></div>
 				
 				<div class="panel-body">
-					<!--
 					<ul class="list-unstyled">
-						<li ng-repeat="item in ouvrages" ng-if="$index <= 3"><affiche-ouvrage ouvrage="item" on-click="detailOuvrage(item)"></affiche-ouvrage></li>
+						<li *ngFor="let o of ouvrages; let i = index"><app-ouvrages *ngIf="i <= 3" [(ngModel)]="o" name="affiche" ngDefaultControl></app-ouvrages></li>
 					</ul>
-					-->
 				</div>
 			</div>
 		</div>

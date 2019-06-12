@@ -31,7 +31,14 @@ import { OuvragesService } from './ouvrages.service';
 import { AuteursService } from './auteurs.service';
 import { ApiService } from './api.service';
 
-import { Utilisateur } from './membres/utilisateur';
+import { Utilisateur } from './Models/utilisateur';
+import { AjoutAuteurComponent } from './ajout-auteur/ajout-auteur.component';
+import { EditAuteurComponent } from './edit-auteur/edit-auteur.component';
+/*
+import { AjoutOuvrageComponent } from './ajout-ouvrage/ajout-ouvrage.component';
+import { SelectionOuvrageComponent } from './selection-ouvrage/selection-ouvrage.component';
+import { ConsultOuvrageComponent } from './consult-ouvrage/consult-ouvrage.component';
+*/
 
 @NgModule({
   declarations: [
@@ -50,7 +57,9 @@ import { Utilisateur } from './membres/utilisateur';
     OuvrageDetailComponent,
     AjoutOuvrageSerieComponent,
     SelectionOuvrageSerieComponent,
-    ConsultOuvrageSerieComponent
+    ConsultOuvrageSerieComponent,
+    AjoutAuteurComponent,
+    EditAuteurComponent
   ],
   imports: [
     HttpClientModule,

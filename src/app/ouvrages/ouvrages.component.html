@@ -1,3 +1,22 @@
-<p>
-  ouvrages works!
-</p>
+<button class="btn btn-default btn-block"> <!--(click)="actionClick()"-->
+	<div class="grid">
+		<div class="row">
+			<div class="col-xs-6 col-md-6">
+				<img src="{{ouvrage.Couverture}}" alt="Couverture" class="img-responsive img-fluid" />
+			</div>
+			<div class="col-xs-6 col-md-6">
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<strong>{{ouvrage.titre}}</strong>
+					</div>
+				</div>
+				<div class="row">
+					<span ng-repeat="auteur in ouvrage.Auteurs">{{auteur.PrenomsNom()}} </span>
+				</div>
+				<div class="row">
+					{{ouvrage.sous_genre}}
+				</div>
+			</div>
+		</div>
+	</div>
+</button>

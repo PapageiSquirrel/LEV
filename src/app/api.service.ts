@@ -4,18 +4,20 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { Utilisateur } from './membres/utilisateur';
+import { Utilisateur } from './Models/utilisateur';
+import { Ouvrage } from './Models/ouvrage';
+import { Auteur } from './Models/auteur';
 
 const API_URL = environment.apiUrl;
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  withCredentials: true
 };
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-
   constructor(private http: HttpClient) { }
 
   public getUtilisateurs(): Observable<Utilisateur[]> {
@@ -33,21 +35,48 @@ export class ApiService {
 	    */
   }
 
-	public getUtilisateurByPseudoAndMdp(pseudo: string, mdp: string): Observable<Utilisateur> {
-		const url = API_URL + '/api/utilisateurs/?pseudo=${pseudo}&mot_de_passe=${mdp}';
+	public authUtilisateur(pseudo: string, mdp: string): Observable<Utilisateur> {
+		const url = API_URL + '/api/auth';
 		return this.http
-			.get<Utilisateur>(url)
+			.post<Utilisateur>(url, { 'pseudo': pseudo, 'motdepasse': mdp}, httpOptions)
 			.pipe(
 				catchError(this.handleError<Utilisateur>('getUtilisateurByPseudo pseudo=${pseudo} mdp=${mdp}'))
 			);
 	}
 
-	public createUtilisateur(utilisateur: Utilisateur) : Observable<Utilisateur> {
-		const url = API_URL + '/api/utilisateurs/add';
+	public createObject<T>(item: T, col: string) : Observable<T> {
+		const url = API_URL + '/api/data/' + col + '/add/id';
 		return this.http
-			.post<Utilisateur>(url, utilisateur, httpOptions)
+			.post<T>(url, item, httpOptions)
 			.pipe(
-				catchError(this.handleError<Utilisateur>('createUtilisateur'))
+				catchError(this.handleError<T>('createObject col=${col}'))
+			);
+	}
+
+	public getObjectsList<T>(col: string): Observable<T> {
+		const url = API_URL + '/api/data/' + col + '/';
+		return this.http
+			.get<T>(url, httpOptions)
+			.pipe(
+				catchError(this.handleError<T>('getOuvrages'))
+			);
+	}
+
+	public getObjectById<T>(id: string, col: string): Observable<T> {
+		const url = API_URL + '/api/data/' + col + '/?id=' + id;
+		return this.http
+			.get<T>(url, httpOptions)
+			.pipe(
+				catchError(this.handleError<T>('getObjectById col=${col} id=${id}'))
+			);
+	}
+
+	public getObjectsListJoinedByKey<T>(key1: string, key2: string, col1: string, col2: string): Observable<T> {
+		const url = API_URL + '/api/join?collections[]=' + col1 + '&collections[]=' + col2 + '&keys[]=' + key1 + '&keys[]=' + key2;
+		return this.http
+			.get<T>(url, httpOptions)
+			.pipe(
+				catchError(this.handleError<T>('getObjectsListJoinedByKey col=${col1}+${col2} keys=${key1}+${key2}'))
 			);
 	}
 

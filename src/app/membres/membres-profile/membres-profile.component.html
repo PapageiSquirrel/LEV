@@ -40,11 +40,11 @@
 		<div class="col-xs-12 col-md-12">
 			<!-- <span>{{utilisateur.Pseudo}}</span> -->
 			<!-- Modification de l'image -->
-			<div ng-controller="fileCtrl" class="col-xs-6 col-md-6">
+			<div  class="col-xs-6 col-md-6"> <!--ng-controller="fileCtrl"-->
 				<title>Modification d'image de profil</title>
 				<img src="{{utilisateur ? utilisateur.ImgProfil : ''}}" width="100px" height="150px" />
 				<div>
-					<input type="file" file-model="fileSelected">
+					<input type="file" > <!--file-model="fileSelected"-->
 					<button (click)="uploadProfil()">Upload</button>
 				</div>
 			</div>

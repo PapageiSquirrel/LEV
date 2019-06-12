@@ -1,4 +1,4 @@
-<div> <!--*ngIf="utilisateur.pseudo == ''"-->
+<div *ngIf="!connecte; else loggedIn">
 	<button type="button" class="btn btn-primary" (click)="template_selected = 'inscription'">Inscription</button>
 	<button type="button" class="btn btn-success" (click)="template_selected = 'connexion'">Connexion</button>
 
@@ -6,13 +6,13 @@
 		<app-membres-inscription [(utilisateur)]="utilisateur" ngDefaultControl></app-membres-inscription>
 	</div>
 	<div *ngIf="template_selected == 'connexion'">
-		<app-membres-connexion [(utilisateur)]="utilisateur" ngDefaultControl></app-membres-connexion>
+		<app-membres-connexion [(utilisateur)]="utilisateur" (connecte)="onConnecte($event)" ngDefaultControl></app-membres-connexion>
 	</div>
 	<div *ngIf="template_selected == null">
 		Pas de template
 	</div>
 </div>
 
-<div *ngIf="false"> <!--*ngIf="utilisateur.pseudo != ''"-->
+<ng-template #loggedIn>
 	<app-membres-profile [(ngModel)]="utilisateur"></app-membres-profile>
-</div>
+</ng-template>

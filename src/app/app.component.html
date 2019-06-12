@@ -1,18 +1,16 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
   <h1>
-    Welcome to {{ title }}!
+    Welcome to {{ title }} !
   </h1>
 
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" routerLink="/accueil">Accueil</a>
-        <a class="navbar-brand" routerLink="/biblio">Biblioth&egrave;que</a>
-        <a class="navbar-brand" routerLink="/forum">Forum</a>
-        <a class="navbar-brand" routerLink="/membres">Membres</a>
-      </div>
-    </div>
+  <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item"><a class="nav-link" routerLink="/accueil">Accueil</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/biblio">Biblioth&egrave;que</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/forum">Forum</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/membres">Membres</a></li>
+    </ul>
   </nav>
 
   <router-outlet></router-outlet>

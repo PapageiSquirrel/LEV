@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Utilisateur } from './utilisateur';
+import { Utilisateur } from '../Models/utilisateur';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-membres',
@@ -9,14 +10,26 @@ import { Utilisateur } from './utilisateur';
 export class MembresComponent implements OnInit {
   utilisateur: Utilisateur;
   template_selected: string;
+  connecte: boolean;
 
-  constructor() { }
+  constructor(private apiService: ApiService) { }
 
   ngOnInit() {
-  	// récupérer l'utilisateur en session
-
-  	// utilisateur créé par défaut si pas en session
-  	this.utilisateur = new Utilisateur(0, '', '', '');
+    this.apiService.authUtilisateur('','').subscribe(utilisateur => {
+      if (utilisateur) {
+        this.utilisateur = new Utilisateur(utilisateur);
+        if (this.utilisateur.estConnecte()) {
+          this.connecte = true;
+        } 
+      } else {
+        // utilisateur créé par défaut si pas en session
+        this.utilisateur = new Utilisateur({});
+        this.connecte = false
+      }
+    });
   }
 
+  onConnecte(co: boolean) {
+      this.connecte = co;
+  }
 }

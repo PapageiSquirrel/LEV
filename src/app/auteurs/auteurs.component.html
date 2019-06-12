@@ -1,3 +1,21 @@
-<p>
-  auteurs works!
-</p>
+<div>
+	<div class="grid">
+		<label>Auteur(s) :</label>
+		
+		<div class="input-group col-xs-12 nopadding">
+			<input name="prenoms_nom" type="text" class="form-control" placeholder="Prenom(s) Nom" [(ngModel)]="prenoms_nom">
+			<div class="input-group-append">
+				<button class="btn btn-success" type="button" (click)="sauveAuteur(prenoms_nom)">+</button>
+			</div>
+		</div>
+	
+		<div class="form-inline col-xs-12">
+			<div *ngFor="let a of auteurs; let i = index" class="input-group col-xs-6 row">
+				<span class="input-group-addon" id="basic-addon1">{{a.PrenomsNom()}}</span>
+				<span class="input-group-append">
+					<button class=" btn btn-secondary suppr" type="button" (click)="suppAuteur(i)">-</button>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>

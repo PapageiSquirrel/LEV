@@ -1,6 +1,6 @@
-import { Auteur } from '../auteurs/auteur';
-import { Edition } from '../editions/edition';
-import { Tag } from '../tags/tag';
+import { Auteur } from './auteur';
+import { Edition } from './edition';
+import { Tag } from './tag';
 
 export class Ouvrage {
 	id: number;

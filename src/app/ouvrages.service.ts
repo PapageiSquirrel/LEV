@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Ouvrage } from './ouvrages/ouvrage';
+import { Ouvrage } from './Models/ouvrage';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
