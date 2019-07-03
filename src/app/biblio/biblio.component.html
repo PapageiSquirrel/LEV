@@ -15,7 +15,7 @@
 			</nav>
 		</div>
 
-		<div class="col-md-7 nopadding">
+		<div class="col-10 col-md-7 nopadding">
 			<div *ngIf="mode == 'ajout'">
 				<app-ajout-ouvrage-serie [(item)]="item" [colItem]="colItem" [genres]="genres">
 				</app-ajout-ouvrage-serie> <!--on-submit="submit(colItem)"-->
@@ -32,7 +32,7 @@
 			</div>
 		</div>
 			
-		<div class="col-md-3">
+		<div class="d-none d-md-block col-md-3">
 			<div class="panel panel-default">
 				<div class="panel-heading"><h3>Derniers Ajouts</h3></div>
 				

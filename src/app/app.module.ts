@@ -2,6 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { FileUploadModule } from 'ng2-file-upload';
+
+// FONT AWESOME (ICONS)
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -27,13 +31,10 @@ import { ConsultOuvrageSerieComponent } from './biblio/consult-ouvrage-serie/con
 
 //import { HttpClient } from '@angular/common/http';
 
-import { OuvragesService } from './ouvrages.service';
-import { AuteursService } from './auteurs.service';
 import { ApiService } from './api.service';
 
 import { Utilisateur } from './Models/utilisateur';
 import { AjoutAuteurComponent } from './ajout-auteur/ajout-auteur.component';
-import { EditAuteurComponent } from './edit-auteur/edit-auteur.component';
 /*
 import { AjoutOuvrageComponent } from './ajout-ouvrage/ajout-ouvrage.component';
 import { SelectionOuvrageComponent } from './selection-ouvrage/selection-ouvrage.component';
@@ -58,18 +59,17 @@ import { ConsultOuvrageComponent } from './consult-ouvrage/consult-ouvrage.compo
     AjoutOuvrageSerieComponent,
     SelectionOuvrageSerieComponent,
     ConsultOuvrageSerieComponent,
-    AjoutAuteurComponent,
-    EditAuteurComponent
+    AjoutAuteurComponent
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    FontAwesomeModule,
+    FileUploadModule
   ],
   providers: [
-    OuvragesService,
-    AuteursService,
     ApiService
   ],
   bootstrap: [AppComponent]

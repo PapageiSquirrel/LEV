@@ -80,7 +80,7 @@ export class ApiService {
 			);
 	}
 
-	  /**
+	/**
 	 * Handle Http operation that failed.
 	 * Let the app continue.
 	 * @param operation - name of the operation that failed

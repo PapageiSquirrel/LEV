@@ -1,9 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { faFileImage, faUpload } from '@fortawesome/free-solid-svg-icons';
+
 import { Ouvrage } from '../../Models/ouvrage';
 import { Serie } from '../../Models/serie';
 import { Genre, SousGenre } from '../../Models/genre';
 import { Tag } from '../../Models/tag';
+
+import { FileUploader, FileSelectDirective, FileItem } from 'ng2-file-upload';
+import { environment } from '../../../environments/environment';
+
+const API_URL = environment.apiUrl + '/file/';
 
 @Component({
   selector: 'app-ajout-ouvrage-serie',
@@ -17,16 +24,33 @@ export class AjoutOuvrageSerieComponent implements OnInit {
 	@Input() genres: Genre[];
 	items_proposes: Ouvrage[];
 	genre_selected: string;
+	img: string;
+
+	faFileImage = faFileImage;
+	faUpload = faUpload;
+
+	public uploader:FileUploader = new FileUploader({ url: API_URL, itemAlias: 'couverture' });
 
   	constructor() { }
 
 	ngOnInit() {
 		if (!this.item) {
-			if (this.colItem == "ouvrages") this.item = new Ouvrage('', [], '', '', [], '', []);
-			else if (this.colItem == "series") this.item = new Serie('', [], '', '', [], '', []);
+			if (this.colItem == "ouvrages") {
+				this.item = new Ouvrage('', [], '', '', [], '', []);
+			} else if (this.colItem == "series") this.item = new Serie('', [], '', '', [], '', []);
 		}
 		this.items_proposes = [];
 		this.genre_selected = '';
+	}
+
+	public changeCouverture() {
+		this.img = this.uploader.getNotUploadedItems()[0].some.name;
+	}
+
+	public uploadCouverture() {
+		//if (this.colItem == "ouvrages") this.item.couverture = 
+		if (this.colItem == "ouvrages") (this.item as Ouvrage).updateCouverture(this.uploader.getNotUploadedItems()[0].some.name);
+		this.uploader.uploadAll();
 	}
 
 	private showSG(genre: Genre): void {
@@ -36,6 +60,10 @@ export class AjoutOuvrageSerieComponent implements OnInit {
 			this.item.Scenariste = this.item.Auteurs[0];
 		}
 		*/
+	}
+
+	private onSauve(event: boolean) {
+		console.log(this.item.editions);
 	}
 }
 /*

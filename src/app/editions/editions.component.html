@@ -1,3 +1,38 @@
-<p>
-  editions works!
-</p>
+<table class="table table-hover table-responsive">
+	<tr *ngFor="let edition of editions; let i = index">
+		<td class="col-xs-8 col-md-10 form-group">
+			<p>
+				{{edition.nom}} <span *ngIf="edition.poche">(Poche)</span>
+			</p>
+		</td>
+		<td></td>
+		<td class="col-xs-4 col-md-2 form-group">
+			<div *ngIf="editMode === false">
+				<button type="button" class="btn btn-success btn-block" (click)="marqueCommePossede(edition)">Je l'ai</button>
+			</div>
+			<div *ngIf="editMode === true">
+				<button type="button" class="btn btn-danger btn-block" (click)="supprimer(i)" style="color:#fff;">-</button>
+			</div>
+		</td>
+	</tr>
+	<tr *ngIf="editMode === true">
+		<td class="col-xs-3 col-md-4 form-group">
+			<input type="text" class="form-control" id="editeur" placeholder="Maison d'édition" [(ngModel)]="newEdition.nom">
+		</td>
+		<td class="col-xs-3 col-md-4 form-group text-center">
+			<input name="poche" type="checkbox" id="poche" [(ngModel)]="newEdition.poche">
+			<label for="poche">Poche</label>
+		</td>
+		<!--
+		<td class="col-xs-3 col-md-3 text-center">
+			<div ng-show="col == 'Series'" class="form-group">
+				<input type="number" id="nbVolumes" ng-model="newEdition.NbVolumes" width="30px">
+				<label for="nbVolumes">Volumes</label>
+			</div>
+		</td>
+		-->
+		<td class="col-xs-3 col-md-2 form-group">
+			<button type="submit" class="btn btn-success btn-block" (click)="sauver()">+</button>
+		</td>
+	</tr>
+</table>

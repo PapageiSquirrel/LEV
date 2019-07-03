@@ -23,17 +23,27 @@ const errorOutput = fs.createWriteStream('./stderr.log');
 const logger = new Console(output, errorOutput);
 */
 
-// TODO : DATABASE (POSTGRESQL)
 const initOptions = {/* initialization options */};
 const pgp = require('pg-promise')(initOptions);
 const db = pgp('postgres://postgres:passuper@localhost:5432/acclarar_LEV2');
-/*
-// databaseUrl = "mongodb://lev_user:lev_pass@ds147497.mlab.com:47497/db_lev";
-const databaseUrl = "mongodb://lev_user:lev_pass@ds111066.mlab.com:11066/db_lev_dev";
-const Schema = mongoose.Schema;
-const ObjectID = Schema.ObjectID;
-*/
+
 const app = express();
+
+const multer  = require('multer');
+const DIR = 'src/assets/couvertures/';
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, DIR);
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.fieldname);
+    }
+});
+
+/*
+let upload = multer({ dest: DIR });
+*/
+let upload = multer({ storage: storage });
 
 app.use(cors({origin: 'http://localhost:4200', credentials: true}));
 app.use(helmet());
@@ -46,43 +56,21 @@ app.use(session({
   store: new FileStore()
 }));
 
-app.post('/file/', function(request, response) {
-	/*
-	var form = new formidable.IncomingForm();
-	form.uploadDir = path.join(__dirname, '/images/' + urlpath.substring(6) + 's');
-	
-	form.on('file', function(field, file) {
-		fs.stat((file.path, path.join(form.uploadDir, file.name)), function(err, stat) {
-			if(err == null) {
-				console.log('File exists');
-				fs.unlink(file.path, function(err) {
-					if (err) throw err;
-					console.log('successfully deleted : ' + file.path);
-				});
-			} else if(err.code == 'ENOENT') {
-				// file does not exist
-				fs.rename(file.path, path.join(form.uploadDir, file.name));
-			} else {
-				console.log('Some other error: ', err.code);
-			}
-		});
-		
-		// fs.rename(file.path, path.join(form.uploadDir, file.name));
-		response.write(path.join('images/' + urlpath.substring(6) + 's', file.name));
-	});
-	
-	// log any errors that occur
-	form.on('error', function(err) {
-		console.log('An error has occured: \n' + err);
-	});
-
-	// once all the files have been uploaded, send a response to the client
-	form.on('end', function() {
-		response.end();
-	});
-	
-	form.parse(request);
-	*/
+app.post('/file/', upload.single('couverture'), function (req, res, next) {
+  // req.file is the `avatar` file
+  // req.body will hold the text fields, if there were any
+  	if (!req.file) {
+        console.log("No file received");
+        return res.send({
+        	success: false
+        });
+    
+    } else {
+        console.log('file received successfully');
+        return res.send({
+        	success: true
+        })
+    }
 }).post('/api/data/:collection/add/:key', function(request, response) {
 	let col = request.params.collection;
 	let get_key = request.params.key;

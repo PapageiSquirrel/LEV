@@ -1,0 +1,8 @@
+.custom-file-input ~ .custom-file-label::after {
+    content: "" !important;
+}
+
+.fa-input {
+  font-family: 'Font Awesome 5 Free' !important;
+  font-weight: 900 !important;
+}

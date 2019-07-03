@@ -1,9 +1,9 @@
 <div>
 	<div class="grid">
-		<label>Auteur(s) :</label>
+		<label for="prenoms_nom" class="sr-only">Auteur(s) :</label>
 		
 		<div class="input-group col-xs-12 nopadding">
-			<input name="prenoms_nom" type="text" class="form-control" placeholder="Prenom(s) Nom" [(ngModel)]="prenoms_nom">
+			<input name="prenoms_nom" type="text" class="form-control" placeholder="Auteurs : Pr&eacute;nom(s) Nom" [(ngModel)]="prenoms_nom">
 			<div class="input-group-append">
 				<button class="btn btn-success" type="button" (click)="sauveAuteur(prenoms_nom)">+</button>
 			</div>

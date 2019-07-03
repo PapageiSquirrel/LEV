@@ -2,6 +2,8 @@ import { Auteur } from './auteur';
 import { Edition } from './edition';
 import { Tag } from './tag';
 
+const COUV_URL = 'assets/couvertures/';
+
 export class Ouvrage {
 	id: number;
 	titre: string;
@@ -18,7 +20,15 @@ export class Ouvrage {
 		this.genre = genre;
 		this.sous_genre = sous_genre;
 		this.editions = editions;
-		this.couverture = couverture;
+		this.couverture = couverture ? couverture : 'assets/couvertures/Default.png';
 		this.tags = tags;
+	}
+
+	nomCouverture():string {
+		return this.couverture.slice(this.couverture.lastIndexOf('/')+1, this.couverture.lastIndexOf('.'));
+	}
+
+	updateCouverture(filename: string) {
+		this.couverture = COUV_URL + filename;
 	}
 }
