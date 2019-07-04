@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { faFileImage, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition, faFileImage, faUpload, faBook, faBookOpen, faNewspaper, faLayerGroup, faImage } from '@fortawesome/free-solid-svg-icons';
 
 import { Ouvrage } from '../../Models/ouvrage';
 import { Serie } from '../../Models/serie';
@@ -28,6 +28,11 @@ export class AjoutOuvrageSerieComponent implements OnInit {
 
 	faFileImage = faFileImage;
 	faUpload = faUpload;
+	faBook = faBook;
+	faBookOpen = faBookOpen;
+	faNewspaper = faNewspaper;
+	faImage = faImage;
+	faLayerGroup = faLayerGroup;
 
 	public uploader:FileUploader = new FileUploader({ url: API_URL, itemAlias: 'couverture' });
 
@@ -41,6 +46,19 @@ export class AjoutOuvrageSerieComponent implements OnInit {
 		}
 		this.items_proposes = [];
 		this.genre_selected = '';
+	}
+
+	private genreIcon(g: Genre): IconDefinition {
+		switch(g.code) {
+			case 'LI':
+				return faBook;
+			case 'DE':
+				return faImage;
+			case 'AB':
+				return faNewspaper;
+			case 'CO':
+				return faLayerGroup;
+		}
 	}
 
 	public changeCouverture() {

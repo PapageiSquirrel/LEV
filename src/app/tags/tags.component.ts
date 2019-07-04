@@ -1,4 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
+
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import { Tag } from '../Models/tag';
 import { ApiService } from '../api.service';
@@ -11,7 +14,8 @@ import { ApiService } from '../api.service';
 })
 export class TagsComponent implements OnInit {
   @Input() tags: Tag[];
-  nom: string;
+  nom = new FormControl('', Validators.required);
+  faPlus = faPlus;
 
   constructor(private apiService: ApiService) { }
 
@@ -21,15 +25,16 @@ export class TagsComponent implements OnInit {
     }
   }
 
-  sauveTag(n: string) {
-  	let t = new Tag(n);
-  	if (t) this.tags.push(t);
-  	else {
-  		// TODO : Message d'erreur
-  	}
+  sauve() {
+    let n = this.nom.value;
+  	if (n) {
+      let t = new Tag(n);
+    	this.tags.push(t);
+    }
+    this.nom.setValue('');
   }
 
-  suppTag(index: number) {
+  supprimer(index: number) {
   	this.tags.splice(index, 1);
   }
 }

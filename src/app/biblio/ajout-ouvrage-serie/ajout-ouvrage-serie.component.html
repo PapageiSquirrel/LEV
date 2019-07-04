@@ -4,7 +4,7 @@
 			<div class="card-heading"><h3>Ajouter un ouvrage</h3></div>
 			
 			<div class="card-body row">
-				<form>
+				<form (ngSubmit)="onSubmit()" #osForm="ngForm">
 					<!-- TODO : Ajouter un champ avec le nom de la série si elle existe et 
 								le numéro de volume ou la possiblité de pouvoir ajouter 	-->
 					
@@ -53,71 +53,77 @@
 							</volume-serie>
 						</div>
 					</div>-->
-					<div class="form-group col-xs-12">
+					<div class="row no-gutters">
 						<!-- Template de liste de Sous genre -->
-						<div class="row">
-							<div *ngFor="let g of genres" class="col">
-								<button type="button" class="btn btn-primary btn-lg btn-block" (click)="genre_selected = g.code">{{g.libelle}}</button>
-								<select class="col" *ngIf="g.code === genre_selected" name="sous_genre" [(ngModel)]="item.sous_genre">
-									<option *ngFor="let sg of g.sous_genres" [ngValue]="sg">{{sg.libelle}}</option>
-								</select>
-							</div>
+						<div class="btn-group-vertical col-2">
+							<button *ngFor="let g of genres" type="button" class="btn btn-warning" (click)="genre_selected = g.code"><fa-icon [icon]="genreIcon(g)"></fa-icon><!--<span> {{g.libelle}}</span>--></button>
 						</div>
-						
-						<div class="col-xs-12">
-							<div *ngIf="genre_selected == 'LI'">
-								<div class="form-group">
-									<label>Date de sortie :</label>
-									<input type="text" name="text_dds" class="form-control" [(ngModel)]="item.date_sortie" />
-								</div>
+						<div class="col-10 d-flex flex-column justify-content-center border border-warning">
+							<div *ngIf="genre_selected == ''; else withGenre">
+								<p class="text-center">Sélectionner le type d'ouvrage dont il s'agit.</p>
 							</div>
-							<div *ngIf="genre_selected == 'DE'">
-								<div class="form-group">
-									<div class="form-group">
-										<label>Dessinateur :</label>
-										<select class="form-control" [disabled]="item.auteurs.length <= 1" name="dessinateur" [(ngModel)]="item.dessinateur">
-											<!-- TODO: Ajouter une phrase indiquant d'ajouter des auteurs -->
-											<option *ngFor="let a of item.auteurs" [ngValue]="a.id">{{a.prenom_nom}}</option>
-										</select>
-									</div>
-									<div class="form-group">
-										<label>Scenariste :</label>
-										<select class="form-control" [disabled]="item.auteurs.length <= 1" name="scenariste" [(ngModel)]="item.scenariste">
-											<!-- TODO: Ajouter une phrase indiquant d'ajouter des auteurs -->
-											<option *ngFor="let a of item.auteurs" [ngValue]="a">{{a.prenom_nom}}</option>
-										</select>
+							<ng-template #withGenre>
+								<div *ngFor="let g of genres">
+									<select *ngIf="g.code === genre_selected" name="sous_genre" [(ngModel)]="item.sous_genre">
+										<option *ngFor="let sg of g.sous_genres" [ngValue]="sg">{{sg.libelle}}</option>
+									</select>
+								</div>
+								<div *ngIf="genre_selected == 'LI'">
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text">Date de sortie</span>
+										</div>
+										<!--<label for="text_dds" class="sr-only">Date de sortie :</label>-->
+										<input type="date" name="text_dds" class="form-control" [(ngModel)]="item.date_sortie" placeholder="Date de sortie" />
 									</div>
 								</div>
-							</div>
-							<div *ngIf="genre_selected == 'AB'">
-								<div class="form-group">
-									<label>Date de debut :</label>
-									<input type="text" name="text_ddd" class="form-control" [(ngModel)]="item.date_debut" />
+								<div *ngIf="genre_selected == 'DE'">
+									<div class="form-group">
+										<div class="form-group">
+											<label>Dessinateur :</label>
+											<select class="form-control" [disabled]="item.auteurs.length <= 1" name="dessinateur" [(ngModel)]="item.dessinateur">
+												<!-- TODO: Ajouter une phrase indiquant d'ajouter des auteurs -->
+												<option *ngFor="let a of item.auteurs" [ngValue]="a.id">{{a.prenom_nom}}</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label>Scenariste :</label>
+											<select class="form-control" [disabled]="item.auteurs.length <= 1" name="scenariste" [(ngModel)]="item.scenariste">
+												<!-- TODO: Ajouter une phrase indiquant d'ajouter des auteurs -->
+												<option *ngFor="let a of item.auteurs" [ngValue]="a">{{a.prenom_nom}}</option>
+											</select>
+										</div>
+									</div>
 								</div>
-								<div class="form-group">
-									<label>Frequence de parution :</label>
-									<input type="text" name="text_freq" class="form-control" [(ngModel)]="item.frequence_parution" />
+								<div *ngIf="genre_selected == 'AB'">
+									<div class="form-group">
+										<label>Date de debut :</label>
+										<input type="text" name="text_ddd" class="form-control" [(ngModel)]="item.date_debut" />
+									</div>
+									<div class="form-group">
+										<label>Frequence de parution :</label>
+										<input type="text" name="text_freq" class="form-control" [(ngModel)]="item.frequence_parution" />
+									</div>
+									<div class="form-group">
+										<label>
+											Toujours en parution : <input type="checkbox" name="enparution" [(ngModel)]="item.enparution" />
+										</label>
+									</div>
 								</div>
-								<div class="form-group">
-									<label>
-										Toujours en parution : <input type="checkbox" name="enparution" [(ngModel)]="item.enparution" />
-									</label>
+								<div *ngIf="genre_selected == 'CO'">
+								
 								</div>
-							</div>
-							<div *ngIf="genre_selected == 'CO'">
-							
-							</div>
+							</ng-template>
 						</div>
 					</div>
-					
-					<div class="form-group col-xs-12 col-md-12 separation">
+					<div class="form-group col-xs-12 col-md-12">
 						<app-editions [editMode]="true" [(editions)]="item.editions" (sauve)="onSauve($event)" ngDefaultControl></app-editions>
 					</div>
 				</form>
 			</div>
 			
 			<div class="panel-footer">
-				<button class="form-control" name="btn_soumettre" (click)="submit()">Soumettre</button>
+				<button class="form-control btn btn-secondary" name="btn_soumettre" (click)="submit()">Soumettre</button>
 			</div>
 		</div>
 	</div>

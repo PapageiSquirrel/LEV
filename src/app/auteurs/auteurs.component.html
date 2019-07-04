@@ -3,18 +3,20 @@
 		<label for="prenoms_nom" class="sr-only">Auteur(s) :</label>
 		
 		<div class="input-group col-xs-12 nopadding">
-			<input name="prenoms_nom" type="text" class="form-control" placeholder="Auteurs : Pr&eacute;nom(s) Nom" [(ngModel)]="prenoms_nom">
+			<input name="prenoms_nom" type="text" class="form-control" placeholder="Auteurs : Pr&eacute;nom(s) Nom" [formControl]="prenoms_nom"><!-- [(ngModel)]="prenoms_nom"-->
 			<div class="input-group-append">
-				<button class="btn btn-success" type="button" (click)="sauveAuteur(prenoms_nom)">+</button>
+				<button class="btn btn-success" type="button" [disabled]="!prenoms_nom.valid" (click)="sauve()"><fa-icon [icon]="faPlus" style="color:#fff;"></fa-icon></button>
 			</div>
 		</div>
 	
 		<div class="form-inline col-xs-12">
-			<div *ngFor="let a of auteurs; let i = index" class="input-group col-xs-6 row">
-				<span class="input-group-addon" id="basic-addon1">{{a.PrenomsNom()}}</span>
-				<span class="input-group-append">
-					<button class=" btn btn-secondary suppr" type="button" (click)="suppAuteur(i)">-</button>
-				</span>
+			<div *ngFor="let a of auteurs; let i = index" class="col-xs-6">
+				<div class="input-group">
+					<span class="input-group-text">{{a.PrenomsNom()}}</span>
+					<span class="input-group-append">
+						<button class=" btn btn-danger suppr" type="button" (click)="supprimer(i)">-</button>
+					</span>
+				</div>
 			</div>
 		</div>
 	</div>

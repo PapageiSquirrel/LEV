@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+
 import { Edition } from '../Models/edition';
 import { ApiService } from '../api.service';
 
@@ -15,6 +17,7 @@ export class EditionsComponent implements OnInit {
   @Input() editions: Edition[];
   @Output() sauve = new EventEmitter<boolean>();
   newEdition: Edition;
+  faPlus = faPlus;
 
   constructor(private apiService: ApiService) { }
 

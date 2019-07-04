@@ -13,6 +13,9 @@
 # sessions
 /sessions
 
+# assets
+/src/assets
+
 # profiling files
 chrome-profiler-events.json
 speed-measure-plugin.json

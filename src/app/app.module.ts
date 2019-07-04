@@ -1,8 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FileUploadModule } from 'ng2-file-upload';
+
+//import { MatTooltipModule } from '@angular/material/tooltip';
 
 // FONT AWESOME (ICONS)
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -66,8 +68,10 @@ import { ConsultOuvrageComponent } from './consult-ouvrage/consult-ouvrage.compo
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     FontAwesomeModule,
     FileUploadModule
+    //MatTooltipModule
   ],
   providers: [
     ApiService

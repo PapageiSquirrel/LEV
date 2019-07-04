@@ -2,14 +2,10 @@
 	<button type="button" class="btn btn-primary" (click)="template_selected = 'inscription'">Inscription</button>
 	<button type="button" class="btn btn-success" (click)="template_selected = 'connexion'">Connexion</button>
 
-	<div *ngIf="template_selected == 'inscription'">
-		<app-membres-inscription [(utilisateur)]="utilisateur" ngDefaultControl></app-membres-inscription>
-	</div>
-	<div *ngIf="template_selected == 'connexion'">
-		<app-membres-connexion [(utilisateur)]="utilisateur" (connecte)="onConnecte($event)" ngDefaultControl></app-membres-connexion>
-	</div>
-	<div *ngIf="template_selected == null">
-		Pas de template
+	<div [ngSwitch]="template_selected">
+		<app-membres-inscription *ngSwitchCase="'inscription'" [(utilisateur)]="utilisateur" ngDefaultControl></app-membres-inscription>
+		<app-membres-connexion *ngSwitchCase="'connexion'" [(utilisateur)]="utilisateur" (connecte)="onConnecte($event)" ngDefaultControl></app-membres-connexion>
+		<div *ngSwitchDefault>Pas de template</div>
 	</div>
 </div>
 

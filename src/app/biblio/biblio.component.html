@@ -16,19 +16,17 @@
 		</div>
 
 		<div class="col-10 col-md-7 nopadding">
-			<div *ngIf="mode == 'ajout'">
-				<app-ajout-ouvrage-serie [(item)]="item" [colItem]="colItem" [genres]="genres">
+			<div [ngSwitch]="mode">
+				<app-ajout-ouvrage-serie *ngSwitchCase="'ajout'" [(item)]="item" [colItem]="colItem" [genres]="genres">
 				</app-ajout-ouvrage-serie> <!--on-submit="submit(colItem)"-->
-			</div>
-			
-			<div *ngIf="mode == 'selection'">
-				<app-selection-ouvrage-serie [(item)]="item" [colItem]="colItem" [genres]="genres">
-				</app-selection-ouvrage-serie> <!--on-modifier="modifierOuvrage()"-->
-			</div>
 
-			<div *ngIf="action == 'consult' || action == 'selection'">
-				<app-consult-ouvrage-serie [titre]="'Mes Ouvrages'" [series]="series" [ouvrages]="ouvrages">
+				<app-selection-ouvrage-serie *ngSwitchCase="'selection'" [(item)]="item" [colItem]="colItem" [genres]="genres">
+				</app-selection-ouvrage-serie> <!--on-modifier="modifierOuvrage()"-->
+
+				<app-consult-ouvrage-serie *ngSwitchCase="'consult' || 'selection'" [titre]="'Mes Ouvrages'" [series]="series" [ouvrages]="ouvrages">
 				</app-consult-ouvrage-serie> <!--on-selection="detailOuvrage"-->
+				
+				<div *ngSwitchDefault></div>
 			</div>
 		</div>
 			
