@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTags, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { Tag } from '../Models/tag';
 import { ApiService } from '../api.service';
@@ -15,7 +15,10 @@ import { ApiService } from '../api.service';
 export class TagsComponent implements OnInit {
   @Input() tags: Tag[];
   nom = new FormControl('', Validators.required);
+
   faPlus = faPlus;
+  faTags = faTags;
+  faTimesCircle = faTimesCircle;
 
   constructor(private apiService: ApiService) { }
 

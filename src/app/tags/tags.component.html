@@ -1,23 +1,17 @@
 <div>
-	<div class="grid">
-		<label for="nom" class="sr-only">Mot-cl&eacute;(s) :</label>
-		
-		<div class="input-group col-xs-12 nopadding">
-			<input name="nom" type="text" class="form-control" placeholder="Mot-cl&eacute;" [formControl]="nom" />
-			<div class="input-group-append">
-				<button class="btn btn-success" type="button" [disabled]="!nom.valid" (click)="sauve()"><fa-icon [icon]="faPlus" style="color:#fff;"></fa-icon></button>
-			</div>
-		</div>
+	<mat-form-field class="full-width">
+			<input matInput name="nom" type="text" placeholder="Mot-cl&eacute;" [formControl]="nom" />
+			<fa-icon matPrefix [icon]="faTags" class="prefix-padding"></fa-icon>
+			<button matSuffix mat-raised-button color="accent" type="button" [disabled]="!nom.valid" (click)="sauve()"><fa-icon [icon]="faPlus"></fa-icon></button>
+	</mat-form-field>
 	
-		<div class="form-inline col-xs-12">
-			<div *ngFor="let t of tags; let i = index" class="col-xs-6">
-				<div class="input-group">
-					<span class="input-group-text">{{t.nom}}</span>
-					<span class="input-group-append">
-						<button class="btn btn-danger suppr" type="button" (click)="supprimer(i)">-</button>
-					</span>
-				</div>
-			</div>
-		</div>
-	</div>
+	<mat-chip-list #chipList class="full-width" aria-label="Tags">
+	    <mat-chip
+			*ngFor="let t of tags; let i = index"
+			(removed)="supprimer(i)"
+			color="accent" selected>
+			{{t.nom}}
+			<fa-icon matChipRemove [icon]="faTimesCircle"></fa-icon>
+	    </mat-chip>
+	</mat-chip-list>
 </div>

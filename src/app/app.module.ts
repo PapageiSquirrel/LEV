@@ -4,7 +4,9 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FileUploadModule } from 'ng2-file-upload';
 
-//import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatFormFieldModule, MatInputModule, MatTooltipModule, MatSelectModule, MatCheckboxModule, 
+  MatDatepickerModule, MatNativeDateModule, MAT_DATE_LOCALE, MatChipsModule, MatButtonToggleModule, MatButtonModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // FONT AWESOME (ICONS)
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -35,14 +37,6 @@ import { ConsultOuvrageSerieComponent } from './biblio/consult-ouvrage-serie/con
 
 import { ApiService } from './api.service';
 
-import { Utilisateur } from './Models/utilisateur';
-import { AjoutAuteurComponent } from './ajout-auteur/ajout-auteur.component';
-/*
-import { AjoutOuvrageComponent } from './ajout-ouvrage/ajout-ouvrage.component';
-import { SelectionOuvrageComponent } from './selection-ouvrage/selection-ouvrage.component';
-import { ConsultOuvrageComponent } from './consult-ouvrage/consult-ouvrage.component';
-*/
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,8 +54,7 @@ import { ConsultOuvrageComponent } from './consult-ouvrage/consult-ouvrage.compo
     OuvrageDetailComponent,
     AjoutOuvrageSerieComponent,
     SelectionOuvrageSerieComponent,
-    ConsultOuvrageSerieComponent,
-    AjoutAuteurComponent
+    ConsultOuvrageSerieComponent
   ],
   imports: [
     HttpClientModule,
@@ -69,12 +62,26 @@ import { ConsultOuvrageComponent } from './consult-ouvrage/consult-ouvrage.compo
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    // FONTAWESOME
     FontAwesomeModule,
-    FileUploadModule
-    //MatTooltipModule
+    // NG2FILEUPLOAD
+    FileUploadModule,
+    // ANGULAR MATERIAL
+    BrowserAnimationsModule,
+    MatTooltipModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatChipsModule,
+    MatButtonToggleModule,
+    MatButtonModule
   ],
   providers: [
-    ApiService
+    ApiService,
+    {provide: MAT_DATE_LOCALE, useValue: 'fr-FR'}
   ],
   bootstrap: [AppComponent]
 })

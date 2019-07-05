@@ -17,9 +17,9 @@
 							<div class="col-12 form-group">
 								<div class="input-group">
 									<div class="input-group-prepend">
-										<a class="btn btn-success" (click)="uploadCouverture()">
-											<fa-icon [icon]="faUpload" style="color:#fff;"></fa-icon>
-										</a>
+										<button mat-raised-button color="accent" (click)="uploadCouverture()">
+											<fa-icon [icon]="faUpload"></fa-icon>
+										</button>
 									</div>
 									<div class="custom-file">
 										<input name="couverture" type="file" ng2FileSelect [uploader]="uploader" (change)="changeCouverture()" class="custom-file-input" /> <!--file-model="fileSelected"-->
@@ -29,19 +29,15 @@
 							</div>
 					    </div>
 					    <div class="col-8">
-							<div class="form-group">
-								<label for="titre" class="sr-only">Titre :</label>
-								<input type="text" name="titre" class="form-control" [(ngModel)]="item.titre" placeholder="Titre de l'ouvrage" />
-								<!--(change)="filtrerItemsExistants()"-->
-							</div>
+							<mat-form-field class="full-width">
+							    <input matInput type="text" name="titre1" placeholder="Titre" [(ngModel)]="item.titre">
+							    <fa-icon matPrefix [icon]="faQuoteLeft" class="prefix-padding"></fa-icon>
+							    <fa-icon matSuffix [icon]="faQuoteRight"></fa-icon>
+							</mat-form-field>
 							
-							<div class="form-group">
-								<app-auteurs [(ngModel)]="item.auteurs" name="auteurs" ngDefaultControl></app-auteurs>
-							</div>
+							<app-auteurs [(auteurs)]="item.auteurs" name="auteurs" ngDefaultControl></app-auteurs>
 
-							<div class="form-group">
-								<app-tags [(ngModel)]="item.tags" name="tags" ngDefaultControl></app-tags>
-							</div>
+							<app-tags [(tags)]="item.tags" name="tags" ngDefaultControl></app-tags>
 						</div>
 					</div>
 					
@@ -55,64 +51,82 @@
 					</div>-->
 					<div class="row no-gutters">
 						<!-- Template de liste de Sous genre -->
-						<div class="btn-group-vertical col-2">
-							<button *ngFor="let g of genres" type="button" class="btn btn-warning" (click)="genre_selected = g.code"><fa-icon [icon]="genreIcon(g)"></fa-icon><!--<span> {{g.libelle}}</span>--></button>
-						</div>
+						<mat-button-toggle-group class="col-2" color="accent" vertical="true" #genre_selected="matButtonToggleGroup" (change)="changerGenre(genre_selected.value)">
+							<mat-button-toggle *ngFor="let g of genres" [value]="g.code" [matTooltip]="g.libelle" matTooltipPosition="left" matTooltipShowDelay="500" [aria-label]="g.libelle"><!--[class.active]="g.code === genre_selected"-->
+								<fa-icon [icon]="genreIcon(g)"></fa-icon><!--<span> {{g.libelle}}</span>-->
+							</mat-button-toggle>
+						</mat-button-toggle-group>
 						<div class="col-10 d-flex flex-column justify-content-center border border-warning">
-							<div *ngIf="genre_selected == ''; else withGenre">
+							<div *ngIf="genre_selected.value === undefined; else withGenre">
 								<p class="text-center">Sélectionner le type d'ouvrage dont il s'agit.</p>
 							</div>
 							<ng-template #withGenre>
 								<div *ngFor="let g of genres">
-									<select *ngIf="g.code === genre_selected" name="sous_genre" [(ngModel)]="item.sous_genre">
-										<option *ngFor="let sg of g.sous_genres" [ngValue]="sg">{{sg.libelle}}</option>
-									</select>
+									<mat-form-field *ngIf="g.code === genre_selected.value" class="full-width">
+										<mat-label>S&eacute;lection du genre</mat-label>
+										<mat-select matInput name="sous_genre" [(ngModel)]="item.sous_genre">
+											<mat-option *ngFor="let sg of g.sous_genres" [value]="sg">{{sg.libelle}}</mat-option>
+										</mat-select>
+										<mat-hint>Requis</mat-hint>
+									</mat-form-field>
 								</div>
-								<div *ngIf="genre_selected == 'LI'">
-									<div class="input-group">
-										<div class="input-group-prepend">
-											<span class="input-group-text">Date de sortie</span>
-										</div>
-										<!--<label for="text_dds" class="sr-only">Date de sortie :</label>-->
-										<input type="date" name="text_dds" class="form-control" [(ngModel)]="item.date_sortie" placeholder="Date de sortie" />
-									</div>
-								</div>
-								<div *ngIf="genre_selected == 'DE'">
-									<div class="form-group">
-										<div class="form-group">
-											<label>Dessinateur :</label>
-											<select class="form-control" [disabled]="item.auteurs.length <= 1" name="dessinateur" [(ngModel)]="item.dessinateur">
+								<div [ngSwitch]="genre_selected.value">
+									<mat-form-field *ngSwitchCase="'LI'" class="full-width">
+									  	<input matInput [matDatepicker]="picker_ds" placeholder="Date de sortie" [value]="item.date_sortie">
+									  	<mat-datepicker-toggle matSuffix [for]="picker_ds"></mat-datepicker-toggle>
+									  	<mat-datepicker #picker_ds></mat-datepicker>
+									</mat-form-field>
+
+									<div *ngSwitchCase="'DE'">
+										<mat-form-field class="full-width">
+											<mat-label>Dessinateur</mat-label>
+											<mat-select matInput [disabled]="item.auteurs.length <= 1" name="dessinateur" [(ngModel)]="item.dessinateur">
 												<!-- TODO: Ajouter une phrase indiquant d'ajouter des auteurs -->
-												<option *ngFor="let a of item.auteurs" [ngValue]="a.id">{{a.prenom_nom}}</option>
-											</select>
-										</div>
-										<div class="form-group">
-											<label>Scenariste :</label>
-											<select class="form-control" [disabled]="item.auteurs.length <= 1" name="scenariste" [(ngModel)]="item.scenariste">
+												<mat-option *ngFor="let a of item.auteurs" [value]="a">{{a.PrenomsNom()}}</mat-option>
+											</mat-select>
+										</mat-form-field>
+										<mat-form-field class="full-width">
+											<mat-label>Sc&eacute;nariste</mat-label>
+											<mat-select matInput [disabled]="item.auteurs.length <= 1" name="scenariste" [(ngModel)]="item.scenariste">
 												<!-- TODO: Ajouter une phrase indiquant d'ajouter des auteurs -->
-												<option *ngFor="let a of item.auteurs" [ngValue]="a">{{a.prenom_nom}}</option>
-											</select>
+												<mat-option *ngFor="let a of item.auteurs" [value]="a">{{a.PrenomsNom()}}</mat-option>
+											</mat-select>
+										</mat-form-field>
+									</div>
+
+									<div *ngSwitchCase="'AB'">
+										<mat-form-field class="full-width">
+										  	<input matInput [matDatepicker]="picker_dp" placeholder="D&eacute;but publication" [value]="item.date_debut">
+										  	<mat-datepicker-toggle matSuffix [for]="picker_dp"></mat-datepicker-toggle>
+										  	<mat-datepicker #picker_dp></mat-datepicker>
+										</mat-form-field>
+
+										<div>
+											<mat-form-field class="full-width">
+												<mat-label>Fr&eacute;quence de parution</mat-label>
+												<mat-select matInput name="frequence_parution" [(ngModel)]="item.frequence_parution">->
+													<mat-option [value]="FrequenceParution.Quotidien">{{FrequenceParution.Quotidien}}</mat-option>
+													<mat-option [value]="FrequenceParution.Hebdomadaire">{{FrequenceParution.Hebdomadaire}}</mat-option>
+													<mat-option [value]="FrequenceParution.Mensuel">{{FrequenceParution.Mensuel}}</mat-option>
+													<mat-option [value]="FrequenceParution.Trimenstriel">{{FrequenceParution.Trimenstriel}}</mat-option>
+													<mat-option [value]="FrequenceParution.Annuel">{{FrequenceParution.Annuel}}</mat-option>
+													<mat-option [value]="FrequenceParution.Autre">{{FrequenceParution.Autre}} : </mat-option>
+												</mat-select>
+											</mat-form-field>
+											<input *ngIf="item.frequence_parution == FrequenceParution.Autre" class="full-width" type="text" name="fp_autre" [(ngModel)]="fp_autre">
+										</div>
+										<div>
+											<mat-checkbox type="checkbox" name="enparution" [(ngModel)]="item.enparution">Toujours en parution</mat-checkbox>
 										</div>
 									</div>
-								</div>
-								<div *ngIf="genre_selected == 'AB'">
-									<div class="form-group">
-										<label>Date de debut :</label>
-										<input type="text" name="text_ddd" class="form-control" [(ngModel)]="item.date_debut" />
-									</div>
-									<div class="form-group">
-										<label>Frequence de parution :</label>
-										<input type="text" name="text_freq" class="form-control" [(ngModel)]="item.frequence_parution" />
-									</div>
-									<div class="form-group">
-										<label>
-											Toujours en parution : <input type="checkbox" name="enparution" [(ngModel)]="item.enparution" />
-										</label>
-									</div>
-								</div>
-								<div *ngIf="genre_selected == 'CO'">
+
+									<div *ngSwitchCase="'CO'">
 								
+									</div>
 								</div>
+								
+								
+								
 							</ng-template>
 						</div>
 					</div>

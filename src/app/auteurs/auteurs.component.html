@@ -1,23 +1,17 @@
 <div>
-	<div class="grid">
-		<label for="prenoms_nom" class="sr-only">Auteur(s) :</label>
-		
-		<div class="input-group col-xs-12 nopadding">
-			<input name="prenoms_nom" type="text" class="form-control" placeholder="Auteurs : Pr&eacute;nom(s) Nom" [formControl]="prenoms_nom"><!-- [(ngModel)]="prenoms_nom"-->
-			<div class="input-group-append">
-				<button class="btn btn-success" type="button" [disabled]="!prenoms_nom.valid" (click)="sauve()"><fa-icon [icon]="faPlus" style="color:#fff;"></fa-icon></button>
-			</div>
-		</div>
-	
-		<div class="form-inline col-xs-12">
-			<div *ngFor="let a of auteurs; let i = index" class="col-xs-6">
-				<div class="input-group">
-					<span class="input-group-text">{{a.PrenomsNom()}}</span>
-					<span class="input-group-append">
-						<button class=" btn btn-danger suppr" type="button" (click)="supprimer(i)">-</button>
-					</span>
-				</div>
-			</div>
-		</div>
-	</div>
+	<mat-form-field class="full-width">
+		<input matInput name="prenoms_nom" type="text" placeholder="Auteurs : Pr&eacute;nom(s) Nom" [formControl]="prenoms_nom"><!-- [(ngModel)]="prenoms_nom"-->
+		<fa-icon matPrefix [icon]="faPenNib" class="prefix-padding"></fa-icon>
+		<button matSuffix mat-raised-button color="primary" type="button" [disabled]="!prenoms_nom.valid" (click)="sauve()"><fa-icon [icon]="faPlus"></fa-icon></button>
+	</mat-form-field>
+
+	<mat-chip-list #chipList class="full-width" aria-label="Auteurs">
+	    <mat-chip
+			*ngFor="let a of auteurs; let i = index"
+			(removed)="supprimer(i)"
+			color="primary" selected>
+			{{a.PrenomsNom()}}
+			<fa-icon matChipRemove [icon]="faTimesCircle"></fa-icon>
+	    </mat-chip>
+	</mat-chip-list>
 </div>

@@ -1,0 +1,27 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$lev-app-primary: mat-palette($mat-brown, 400, 200, 600);
+$lev-app-accent:  mat-palette($mat-deep-orange, 800, 400, 900);
+$lev-app-warn:    mat-palette($mat-red);
+
+$lev-app-theme: mat-light-theme($lev-app-primary, $lev-app-accent, $lev-app-warn);
+
+
+@mixin mix-app-theme($app-theme) {
+  $primary: map-get($app-theme, primary);
+  $accent: map-get($app-theme, accent);
+
+  .mat-button-toggle {
+    background-color: mat-color($primary);
+    color: mat-color($primary, default-contrast);
+  }
+
+  .mat-button-toggle-checked {
+    background-color: mat-color($accent);
+    color: mat-color($accent, default-contrast);
+  }
+}
+
+@include angular-material-theme($lev-app-theme);
+@include mix-app-theme($lev-app-theme);

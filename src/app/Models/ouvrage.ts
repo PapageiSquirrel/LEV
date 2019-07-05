@@ -2,6 +2,8 @@ import { Auteur } from './auteur';
 import { Edition } from './edition';
 import { Tag } from './tag';
 
+import { FrequenceParution } from '../constants/enums';
+
 const COUV_URL = 'assets/couvertures/';
 
 export class Ouvrage {
@@ -30,5 +32,43 @@ export class Ouvrage {
 
 	updateCouverture(filename: string) {
 		this.couverture = COUV_URL + filename;
+	}
+}
+
+export class Livre extends Ouvrage {
+	date_de_sortie: Date;
+
+	constructor(o: Ouvrage, dds: Date) {
+		super(o.titre, o.auteurs, o.genre, o.sous_genre, o.editions, o.couverture, o.tags);
+		this.date_de_sortie = dds;
+	}
+}
+
+export class Dessin extends Ouvrage {
+	dessinateur: Auteur;
+	scenariste: Auteur;
+
+	constructor(o: Ouvrage, dessinateur: Auteur, scenariste: Auteur) {
+		
+		super(o.titre, o.auteurs, o.genre, o.sous_genre, o.editions, o.couverture, o.tags);
+		this.dessinateur = dessinateur;
+		this.scenariste = scenariste;
+	}
+}
+
+export class Abonnement extends Ouvrage {
+	date_de_debut: Date;
+	frequence_parution: FrequenceParution;
+
+	constructor(o: Ouvrage, ddd: Date, fp: FrequenceParution) {
+		super(o.titre, o.auteurs, o.genre, o.sous_genre, o.editions, o.couverture, o.tags);
+		this.date_de_debut = ddd;
+		this.frequence_parution = fp;
+	}
+}
+
+export class Conglomerat extends Ouvrage {
+	constructor(o: Ouvrage) {
+		super(o.titre, o.auteurs, o.genre, o.sous_genre, o.editions, o.couverture, o.tags);
 	}
 }

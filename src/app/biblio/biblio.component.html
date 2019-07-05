@@ -36,7 +36,7 @@
 				
 				<div class="panel-body">
 					<ul class="list-unstyled">
-						<li *ngFor="let o of ouvrages; let i = index"><app-ouvrages *ngIf="i <= 3" [(ngModel)]="o" name="affiche" ngDefaultControl></app-ouvrages></li>
+						<li *ngFor="let o of ouvrages; let i = index"><!--<app-ouvrages *ngIf="i <= 3" [ngModel]="o" name="affiche" ngDefaultControl></app-ouvrages>--></li>
 					</ul>
 				</div>
 			</div>

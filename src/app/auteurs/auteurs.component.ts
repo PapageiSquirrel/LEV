@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faPenNib, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { Auteur } from '../Models/auteur';
 import { ApiService } from '../api.service';
@@ -15,8 +15,10 @@ import { ApiService } from '../api.service';
 export class AuteursComponent implements OnInit {
   @Input() auteurs: Auteur[];
   prenoms_nom = new FormControl('', Validators.required);
-  msg: string;
+
   faPlus = faPlus;
+  faPenNib = faPenNib;
+  faTimesCircle = faTimesCircle;
 
   constructor(private apiService: ApiService) { }
 
@@ -31,6 +33,7 @@ export class AuteursComponent implements OnInit {
     if (pn) {
     	let a = new Auteur(pn);
     	this.auteurs.push(a);
+      console.log(this.auteurs);
     }
     this.prenoms_nom.setValue('');
   }
